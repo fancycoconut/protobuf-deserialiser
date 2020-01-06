@@ -1,3 +1,5 @@
+using Google.Protobuf.Reflection;
+
 namespace ProtobufDeserialiser
 {
     public class FieldInfo

@@ -1,0 +1,13 @@
+﻿syntax = "proto3";
+
+message Customer {
+	int32 Id = 1;
+	string FirstName = 2;
+	string Surname = 3;
+	CustomerType Type = 4;
+    
+	enum CustomerType {
+		Normal = 0;
+		VIP = 1;
+	}
+}

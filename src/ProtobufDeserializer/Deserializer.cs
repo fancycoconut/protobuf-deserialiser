@@ -4,7 +4,7 @@ using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserialiser
+namespace ProtobufDeserializer
 {
     public class Deserializer
     {
@@ -30,10 +30,13 @@ namespace ProtobufDeserialiser
 
         public static Dictionary<string, object> Deserialize(byte[] descriptorData, byte[] data)
         {
-            var fileDescriptorSet = Google.Protobuf.Reflection.FileDescriptorSet.Parser.ParseFrom(descriptorData);
+            var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
             var descriptor = fileDescriptorSet.File[0];
 
+            // Parse Message Types & nested messages
             var message = descriptor.MessageType[0];
+
+            // Parse fields
             var fields = message.Field.Select(x => new FieldInfo
             {
                 Name = x.Name,
@@ -47,7 +50,7 @@ namespace ProtobufDeserialiser
             // Parse data
             foreach (var field in fields)
             {
-                object val = GetDefaultValue(field.Type);
+                var val = GetDefaultValue(field.Type);
                 var tag = input.ReadTag();
 
                 if (tag != 0 && !input.IsAtEnd)
@@ -75,6 +78,34 @@ namespace ProtobufDeserialiser
             return objectMap;
         }
 
+        //private static Dictionary<string, object> ParseProto()
+        //{
+
+        //}
+
+        //private static object ReadProtoData(FieldDescriptorProto.Types.Type type, CodedInputStream input)
+        //{
+        //    var tag = input.ReadTag();
+        //    if (tag == 0 || input.IsAtEnd) return null;
+
+        //    switch (type)
+        //    {
+        //        case FieldDescriptorProto.Types.Type.Int32:
+        //            return input.ReadInt32();
+        //        case FieldDescriptorProto.Types.Type.String:
+        //            return input.ReadString();
+        //        case FieldDescriptorProto.Types.Type.Enum:
+        //            return input.ReadEnum();
+        //        case FieldDescriptorProto.Types.Type.Message:
+        //            break;
+        //        default:
+        //            // No field mapping found then skip
+        //            return null;
+        //    }
+
+        //    return null;
+        //}
+
         private static object GetDefaultValue(FieldDescriptorProto.Types.Type type)
         {
             switch (type)
@@ -85,6 +116,8 @@ namespace ProtobufDeserialiser
                     return string.Empty;
                 case FieldDescriptorProto.Types.Type.Enum:
                     return 0;
+                case FieldDescriptorProto.Types.Type.Message:
+                    return new Dictionary<string, object>();
                 default:
                     return null;
             }

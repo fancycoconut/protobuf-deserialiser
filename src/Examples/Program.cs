@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using ProtobufDeserializer;
+using ProtobufDeserializer.Fields;
+using ProtobufDeserializer.V1;
 
 namespace Examples
 {
@@ -30,15 +32,18 @@ namespace Examples
             }
 
             Console.WriteLine("Hello World!");
-            var instance = Deserializer.Deserialize(descStream.ToArray(), customerStream.ToArray(), typeof(Customer));
+            //var instance = Deserializer.Deserialize(descStream.ToArray(), customerStream.ToArray(), typeof(Customer));
 
             // Nested message object
             // ----------------------------------------------------------------------------------------------------------------
-            var dataStream = "8,1,12,5,4b,61,77,61,69,1a,4,57,6f,6e,67,22,10,a,6,74,65,73,74,65,64,12,6,68,65,68,65,68,65".Split(',');
             // nested inside
-            var descriptorStreamed = "0A CB 01 0A 0C 4E 65 73 74 65 64 2E 70 72 6F 74 6F 22 B2 01 0A 03 46 6F 6F 12 0E 0A 02 49 64 18 01 20 01 28 05 52 02 49 64 12 1C 0A 09 46 69 72 73 74 4E 61 6D 65 18 02 20 01 28 09 52 09 46 69 72 73 74 4E 61 6D 65 12 18 0A 07 53 75 72 6E 61 6D 65 18 03 20 01 28 09 52 07 53 75 72 6E 61 6D 65 12 2E 0A 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 18 04 20 01 28 0B 32 08 2E 46 6F 6F 2E 42 61 72 52 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 1A 33 0A 03 42 61 72 12 12 0A 04 53 74 61 72 18 01 20 01 28 09 52 04 53 74 61 72 12 18 0A 07 46 69 67 68 74 65 72 18 02 20 01 28 09 52 07 46 69 67 68 74 65 72 62 06 70 72 6F 74 6F 33".Split(' ');
+            //var dataStream = "8,1,12,5,4b,61,77,61,69,1a,4,57,6f,6e,67,22,10,a,6,74,65,73,74,65,64,12,6,68,65,68,65,68,65".Split(',');
+            //var descriptorStreamed = "0A CB 01 0A 0C 4E 65 73 74 65 64 2E 70 72 6F 74 6F 22 B2 01 0A 03 46 6F 6F 12 0E 0A 02 49 64 18 01 20 01 28 05 52 02 49 64 12 1C 0A 09 46 69 72 73 74 4E 61 6D 65 18 02 20 01 28 09 52 09 46 69 72 73 74 4E 61 6D 65 12 18 0A 07 53 75 72 6E 61 6D 65 18 03 20 01 28 09 52 07 53 75 72 6E 61 6D 65 12 2E 0A 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 18 04 20 01 28 0B 32 08 2E 46 6F 6F 2E 42 61 72 52 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 1A 33 0A 03 42 61 72 12 12 0A 04 53 74 61 72 18 01 20 01 28 09 52 04 53 74 61 72 12 18 0A 07 46 69 67 68 74 65 72 18 02 20 01 28 09 52 07 46 69 67 68 74 65 72 62 06 70 72 6F 74 6F 33".Split(' ');
             // nested outside
-            //var descriptorStreamed = "0A C6 01 0A 0C 4E 65 73 74 65 64 2E 70 72 6F 74 6F 22 79 0A 03 46 6F 6F 12 0E 0A 02 49 64 18 01 20 01 28 05 52 02 49 64 12 1C 0A 09 46 69 72 73 74 4E 61 6D 65 18 02 20 01 28 09 52 09 46 69 72 73 74 4E 61 6D 65 12 18 0A 07 53 75 72 6E 61 6D 65 18 03 20 01 28 09 52 07 53 75 72 6E 61 6D 65 12 2A 0A 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 18 04 20 01 28 0B 32 04 2E 42 61 72 52 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 22 33 0A 03 42 61 72 12 12 0A 04 53 74 61 72 18 01 20 01 28 09 52 04 53 74 61 72 12 18 0A 07 46 69 67 68 74 65 72 18 02 20 01 28 09 52 07 46 69 67 68 74 65 72 62 06 70 72 6F 74 6F 33".Split(' ');
+            var dataStream = "8,1,12,5,4b,61,77,61,69,1a,4,57,6f,6e,67,22,10,a,6,74,65,73,74,65,64,12,6,68,65,68,65,68,65".Split(',');
+            var descriptorStreamed = "0A C6 01 0A 0C 4E 65 73 74 65 64 2E 70 72 6F 74 6F 22 79 0A 03 46 6F 6F 12 0E 0A 02 49 64 18 01 20 01 28 05 52 02 49 64 12 1C 0A 09 46 69 72 73 74 4E 61 6D 65 18 02 20 01 28 09 52 09 46 69 72 73 74 4E 61 6D 65 12 18 0A 07 53 75 72 6E 61 6D 65 18 03 20 01 28 09 52 07 53 75 72 6E 61 6D 65 12 2A 0A 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 18 04 20 01 28 0B 32 04 2E 42 61 72 52 0D 4E 65 73 74 65 64 4D 65 73 73 61 67 65 22 33 0A 03 42 61 72 12 12 0A 04 53 74 61 72 18 01 20 01 28 09 52 04 53 74 61 72 12 18 0A 07 46 69 67 68 74 65 72 18 02 20 01 28 09 52 07 46 69 67 68 74 65 72 62 06 70 72 6F 74 6F 33".Split(' ');
+
+            //var edDesc = "0A E9 01 0A 10 44 65 76 69 63 65 49 6E 66 6F 2E 70 72 6F 74 6F 1A 1E 67 6F 6F 67 6C 65 2F 70 72 6F 74 6F 62 75 66 2F 77 72 61 70 70 65 72 73 2E 70 72 6F 74 6F 22 AC 01 0A 0A 44 65 76 69 63 65 49 6E 66 6F 12 34 0A 06 73 65 72 69 61 6C 18 01 20 01 28 0B 32 1C 2E 67 6F 6F 67 6C 65 2E 70 72 6F 74 6F 62 75 66 2E 53 74 72 69 6E 67 56 61 6C 75 65 52 06 73 65 72 69 61 6C 12 34 0A 06 66 61 6D 69 6C 79 18 02 20 01 28 0B 32 1C 2E 67 6F 6F 67 6C 65 2E 70 72 6F 74 6F 62 75 66 2E 53 74 72 69 6E 67 56 61 6C 75 65 52 06 66 61 6D 69 6C 79 12 32 0A 05 6D 6F 64 65 6C 18 03 20 01 28 0B 32 1C 2E 67 6F 6F 67 6C 65 2E 70 72 6F 74 6F 62 75 66 2E 53 74 72 69 6E 67 56 61 6C 75 65 52 05 6D 6F 64 65 6C 62 06 70 72 6F 74 6F 33".Split(' ');
 
             var nestedDataStream = new MemoryStream();
             foreach (var s in dataStream)
@@ -54,7 +59,13 @@ namespace Examples
                 nestedDescStream.WriteByte(b);
             }
 
-            var fieldsMap = Deserializer.Deserialize(nestedDescStream.ToArray(), nestedDataStream.ToArray());
+            //// V2
+            var tester = new ProtobufDeserializer.Fields.Deserializer(nestedDescStream.ToArray());
+            var t = tester.Deserialize(nestedDataStream.ToArray());
+            var t2 = tester.Deserialize<Foo>(nestedDataStream.ToArray());
+            ////
+
+            var fieldsMap = ProtobufDeserializer.V1.Deserializer.Deserialize(nestedDescStream.ToArray(), nestedDataStream.ToArray());
 
             Console.ReadLine();
         }
@@ -81,7 +92,7 @@ namespace Examples
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string Surname { get; set; }
-        public Bar Fighter { get; set; }
+        public Bar NestedMessage { get; set; }
     }
 
     public class Bar

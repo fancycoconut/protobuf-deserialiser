@@ -58,7 +58,7 @@ namespace ProtobufDeserializer.Fields
             var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
             var descriptor = fileDescriptorSet.File[0];
 
-            var fields = ParseFields(descriptor.MessageType, input);
+            var fields = ParseFields(descriptor.MessageType, input).ToList();
             ReadFields(fields);
 
             return fields.ToDictionary(field => field.Name, field => field.Value);
@@ -66,24 +66,21 @@ namespace ProtobufDeserializer.Fields
 
         private IEnumerable<Field> ParseFields(IEnumerable<DescriptorProto> messages, CodedInputStream input)
         {
-            var fields = new List<Field>();
             foreach (var messageType in messages)
             {
                 foreach (var field in messageType.Field)
                 {
-                    fields.Add(FieldFactory.Create(field, input));
+                    yield return FieldFactory.Create(field, input);
                 }
 
                 foreach (var nestedMessageType in messageType.NestedType)
                 {
                     foreach (var field in nestedMessageType.Field)
                     {
-                        fields.Add(FieldFactory.Create(field, input));
+                        yield return FieldFactory.Create(field, input);
                     }
                 }
             }
-
-            return fields;
         }
 
         private void ReadFields(IEnumerable<Field> fields)

@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtobufDeserializer", "src\ProtobufDeserializer\ProtobufDeserializer.csproj", "{2124DE2D-507F-4AD5-84CB-44F04463D31B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Examples", "src\Examples\Examples.csproj", "{08A2C4DD-D125-42F6-905B-AD6C8FF0FC86}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Examples", "src\Examples\Examples.csproj", "{08A2C4DD-D125-42F6-905B-AD6C8FF0FC86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

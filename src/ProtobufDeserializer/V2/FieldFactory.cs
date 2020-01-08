@@ -5,13 +5,12 @@ using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Fields;
-using ProtobufDeserializer.V2.Fields;
 
 namespace ProtobufDeserializer.V2
 {
     public class FieldFactory
     {
-        private static Dictionary<FieldDescriptorProto.Types.Type, Type> typeMap;
+        private static Dictionary<string, Type> typeMap;
         //private static Dictionary<FieldDescriptorProto.Types.Type, Type> typeMap = new Dictionary<FieldDescriptorProto.Types.Type, Type>
         //{
         //    { FieldDescriptorProto.Types.Type.Int32, typeof(Int32Field) },
@@ -22,20 +21,21 @@ namespace ProtobufDeserializer.V2
 
         static FieldFactory()
         {
-            typeMap = GetTypeMapDynamically();
+            typeMap = InitTypeMap();
         }
 
         // This builds our type map dynamically and so it needs to only run once if possible
-        private static Dictionary<FieldDescriptorProto.Types.Type, Type> GetTypeMapDynamically()
+        private static Dictionary<string, Type> InitTypeMap()
         {
             var fieldTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.Namespace == "ProtobufDeserializer.V2.Fields").ToList();
+                .Where(t => t.Namespace == "ProtobufDeserializer.V2.Fields")
+                .ToList();
 
-            var typeMap = new Dictionary<FieldDescriptorProto.Types.Type, Type>();
+            var typeMap = new Dictionary<string, Type>();
             foreach (var type in fieldTypes)
             {
-                var fieldType = type.GetField("FieldType").GetValue(type);
-                typeMap.Add((FieldDescriptorProto.Types.Type)fieldType, type);
+                var fieldType = type.GetField("FieldTypeName").GetValue(type);
+                typeMap.Add((string)fieldType, type);
             }
 
             return typeMap;
@@ -43,7 +43,20 @@ namespace ProtobufDeserializer.V2
 
         public static IField Create(FieldDescriptorProto fieldDescriptor, CodedInputStream input)
         {
-            var typeExists = typeMap.TryGetValue(fieldDescriptor.Type, out var type);
+            if (!string.IsNullOrEmpty(fieldDescriptor.TypeName)
+                && fieldDescriptor.Type == FieldDescriptorProto.Types.Type.Message
+                && typeMap.ContainsKey(fieldDescriptor.TypeName))
+            {
+                return ConstructFieldObject(fieldDescriptor.TypeName, fieldDescriptor, input);
+            }
+
+            var typeName = fieldDescriptor.Type.ToString();
+            return ConstructFieldObject(typeName, fieldDescriptor, input);
+        }
+
+        private static IField ConstructFieldObject(string typeName, FieldDescriptorProto fieldDescriptor, CodedInputStream input)
+        {
+            var typeExists = typeMap.TryGetValue(typeName, out var type);
             if (!typeExists) return null;
 
             var instance = Activator.CreateInstance(type, input);
@@ -56,7 +69,7 @@ namespace ProtobufDeserializer.V2
             instance.GetType().GetProperty("TypeName").SetValue(instance, fieldDescriptor.TypeName);
             //type.InvokeMember("Name", bindingFlags, Type.DefaultBinder, instance, fieldDescriptor.Name);
 
-            return (Field)instance;
+            return (IField)instance;
         }
     }
 }

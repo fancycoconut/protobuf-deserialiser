@@ -6,13 +6,15 @@ namespace ProtobufDeserializer.V2.Fields
 {
     public class Int32Field : Field
     {
-        public const FieldDescriptorProto.Types.Type FieldType = FieldDescriptorProto.Types.Type.Int32;
+        public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Int32);
 
         public Int32Field(CodedInputStream input) : base(input) { }
 
         public override void ReadValue()
         {
             var tag = input.ReadTag();
+            if (tag == 0 || input.IsAtEnd) return;
+
             Value = input.ReadInt32();
         }
     }

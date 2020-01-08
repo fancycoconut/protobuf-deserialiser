@@ -44,7 +44,12 @@ namespace ProtobufDeserializer.V2
                 }
                 else
                 {
-                    fieldMap.TryGetValue(prop.Name, out object propValue);
+                    var fieldExists = fieldMap.TryGetValue(prop.Name, out var propValue);
+                    if (!fieldExists)
+                    {
+                        fieldMap.TryGetValue(prop.Name.ToLower(), out propValue);
+                    }
+
                     prop.SetValue(instance, propValue);
                 }
             }
@@ -54,14 +59,16 @@ namespace ProtobufDeserializer.V2
 
         public Dictionary<string, object> Deserialize(byte[] data)
         {
-            var input = new CodedInputStream(data);
-            var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
-            var descriptor = fileDescriptorSet.File[0];
+            using (var input = new CodedInputStream(data))
+            {
+                var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
+                var descriptor = fileDescriptorSet.File[0];
 
-            var fields = ParseFields(descriptor.MessageType, input).ToList();
-            ReadFields(fields);
+                var fields = ParseFields(descriptor.MessageType, input).ToList();
+                ReadFields(fields);
 
-            return fields.ToDictionary(field => field.Name, field => field.Value);
+                return fields.ToDictionary(field => field.Name, field => field.Value);
+            }
         }
 
         private IEnumerable<IField> ParseFields(IEnumerable<DescriptorProto> messages, CodedInputStream input)

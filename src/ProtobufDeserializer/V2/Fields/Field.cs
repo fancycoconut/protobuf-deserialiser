@@ -25,6 +25,7 @@ namespace ProtobufDeserializer.Fields
 
         internal readonly CodedInputStream input;
 
+
         protected Field(CodedInputStream input)
         {
             this.input = input;

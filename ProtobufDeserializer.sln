@@ -5,7 +5,12 @@ VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtobufDeserializer", "src\ProtobufDeserializer\ProtobufDeserializer.csproj", "{2124DE2D-507F-4AD5-84CB-44F04463D31B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtobufDeserializer.Tests", "tests\ProtobufDeserializer.Tests\ProtobufDeserializer.Tests.csproj", "{C9681A7D-F561-4493-905B-CEEC8B76D433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProtobufDeserializer.Tests", "tests\ProtobufDeserializer.Tests\ProtobufDeserializer.Tests.csproj", "{C9681A7D-F561-4493-905B-CEEC8B76D433}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{CD56B385-8B6C-44CB-97F5-3B8E9FF7A354}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

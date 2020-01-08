@@ -6,7 +6,7 @@ namespace ProtobufDeserializer.V2.Fields
 {
     public class MessageField : Field
     {
-        public const FieldDescriptorProto.Types.Type FieldType = FieldDescriptorProto.Types.Type.Message;
+        public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Message);
 
         public MessageField(CodedInputStream input) : base(input) { }
 
@@ -14,7 +14,9 @@ namespace ProtobufDeserializer.V2.Fields
         {
             // For message, one field might be tag and the other might be length
             var tag = input.ReadTag();
-            input.ReadTag();
+            if (tag == 0 || input.IsAtEnd) return;
+
+            var unknownValue = input.ReadTag();
         }
     }
 }

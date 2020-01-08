@@ -1,11 +1,14 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Fields;
 
 namespace ProtobufDeserializer.V2.Fields
 {
-    public class IntField : Field
+    public class Int32Field : Field
     {
-        public IntField(CodedInputStream input) : base(input) { }
+        public const FieldDescriptorProto.Types.Type FieldType = FieldDescriptorProto.Types.Type.Int32;
+
+        public Int32Field(CodedInputStream input) : base(input) { }
 
         public override void ReadValue()
         {

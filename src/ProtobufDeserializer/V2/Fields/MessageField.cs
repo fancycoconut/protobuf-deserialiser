@@ -1,10 +1,13 @@
 ﻿using Google.Protobuf;
+using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Fields;
 
 namespace ProtobufDeserializer.V2.Fields
 {
     public class MessageField : Field
     {
+        public const FieldDescriptorProto.Types.Type FieldType = FieldDescriptorProto.Types.Type.Message;
+
         public MessageField(CodedInputStream input) : base(input) { }
 
         public override void ReadValue()

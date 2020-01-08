@@ -4,7 +4,18 @@ using Google.Protobuf.Reflection;
 
 namespace ProtobufDeserializer.Fields
 {
-    public class Field
+    public interface IField
+    {
+        string Name { get; set; }
+        int Number { get; set; }
+        string TypeName { get; set; }
+        FieldDescriptorProto.Types.Type Type { get; set; }
+        object Value { get; set; }
+
+        void ReadValue();
+    }
+
+    public abstract class Field : IField
     {
         public string Name { get; set; }
         public int Number { get; set; }
@@ -14,7 +25,7 @@ namespace ProtobufDeserializer.Fields
 
         internal readonly CodedInputStream input;
 
-        public Field(CodedInputStream input)
+        protected Field(CodedInputStream input)
         {
             this.input = input;
         }

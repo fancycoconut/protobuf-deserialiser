@@ -64,7 +64,7 @@ namespace ProtobufDeserializer.V2
             return fields.ToDictionary(field => field.Name, field => field.Value);
         }
 
-        private IEnumerable<Field> ParseFields(IEnumerable<DescriptorProto> messages, CodedInputStream input)
+        private IEnumerable<IField> ParseFields(IEnumerable<DescriptorProto> messages, CodedInputStream input)
         {
             foreach (var messageType in messages)
             {
@@ -83,7 +83,7 @@ namespace ProtobufDeserializer.V2
             }
         }
 
-        private void ReadFields(IEnumerable<Field> fields)
+        private void ReadFields(IEnumerable<IField> fields)
         {
             foreach (var field in fields)
             {

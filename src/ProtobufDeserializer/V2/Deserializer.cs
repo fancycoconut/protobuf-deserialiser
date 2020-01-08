@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using ProtobufDeserializer.V2;
+using ProtobufDeserializer.Fields;
 
-namespace ProtobufDeserializer.Fields
+namespace ProtobufDeserializer.V2
 {
     public class Deserializer
     {

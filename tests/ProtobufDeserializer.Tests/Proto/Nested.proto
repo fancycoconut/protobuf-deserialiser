@@ -4,11 +4,10 @@ message Foo {
 	int32 Id = 1;
 	string FirstName = 2;
 	string Surname = 3;
-
 	message Bar {
 		string Star = 1;
 		string Fighter = 2;
 	}
-
+    
 	Bar NestedMessage = 4;
 }

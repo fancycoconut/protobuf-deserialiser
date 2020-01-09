@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Fields;
 
@@ -35,22 +34,22 @@ namespace ProtobufDeserializer.V2.Fields
             Value = input.ReadString();
         }
 
-        private IEnumerable<string> ReadUnpackedRepeated()
-        {
-            uint tag;
-            var list = new List<string>();
-            while ((tag = input.PeekTag()) != 0)
-            {
-                var t = tag & 0xF8;
-                var fieldNumber = t >> 3;
+        //private IEnumerable<string> ReadUnpackedRepeated()
+        //{
+        //    uint tag;
+        //    var list = new List<string>();
+        //    while ((tag = input.PeekTag()) != 0)
+        //    {
+        //        var t = tag & 0xF8;
+        //        var fieldNumber = t >> 3;
 
-                if (fieldNumber != this.FieldNumber) break;
+        //        if (fieldNumber != this.FieldNumber) break;
 
-                input.ReadTag();
-                list.Add(input.ReadString());
-            }
+        //        input.ReadTag();
+        //        list.Add(input.ReadString());
+        //    }
 
-            return list;
-        }
+        //    return list;
+        //}
     }
 }

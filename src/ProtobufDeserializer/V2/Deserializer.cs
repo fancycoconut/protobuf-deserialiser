@@ -36,7 +36,14 @@ namespace ProtobufDeserializer.V2
             var props = type.GetProperties();
             foreach (var prop in props)
             {
-                if (prop.PropertyType.IsClass 
+                if (prop.PropertyType.IsClass
+                    && prop.PropertyType.IsGenericType
+                    && prop.PropertyType.Namespace == "System.Collections.Generic")
+                {
+                    var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
+                    prop.SetValue(instance, propValue);
+                }
+                else if (prop.PropertyType.IsClass 
                     && prop.PropertyType != typeof(string))
                 {
                     var classObject = ConstructObject(fieldMap, prop.PropertyType);

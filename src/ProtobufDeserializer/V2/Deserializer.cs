@@ -39,22 +39,44 @@ namespace ProtobufDeserializer.V2
                 if (prop.PropertyType.IsClass 
                     && prop.PropertyType != typeof(string))
                 {
-                    var val = ConstructObject(fieldMap, prop.PropertyType);
-                    prop.SetValue(instance, val);
+                    var classObject = ConstructObject(fieldMap, prop.PropertyType);
+                    prop.SetValue(instance, classObject);
                 }
                 else
                 {
-                    var fieldExists = fieldMap.TryGetValue(prop.Name, out var propValue);
-                    if (!fieldExists)
-                    {
-                        fieldMap.TryGetValue(prop.Name.ToLower(), out propValue);
-                    }
+                    //var fieldExists = fieldMap.TryGetValue(prop.Name, out var propValue);
+                    //if (!fieldExists)
+                    //{
+                    //    fieldMap.TryGetValue(prop.Name.ToLower(), out propValue);
+                    //}
 
+                    var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
                     prop.SetValue(instance, propValue);
                 }
             }
 
             return instance;
+        }
+
+        private object GetPropertyValueFromMap(string propertyName, Dictionary<string, object> fieldMap)
+        {
+            // TODO: Refactor this....
+            var fieldExists = fieldMap.TryGetValue(propertyName, out var propValue);
+            if (!fieldExists)
+            {
+                var lowerCasedFieldExists = fieldMap.TryGetValue(propertyName.ToLower(), out propValue);
+                if (!lowerCasedFieldExists)
+                {
+                    var upperCasedFieldExists = fieldMap.TryGetValue(propertyName.ToUpper(), out propValue);
+                    if (!upperCasedFieldExists) return null;
+
+                    return propValue;
+                }
+
+                return propValue;
+            }
+
+            return propValue;
         }
 
         public Dictionary<string, object> Deserialize(byte[] data)

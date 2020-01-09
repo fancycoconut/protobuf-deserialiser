@@ -15,6 +15,8 @@ namespace ProtobufDeserializer.V2.Fields
             var tag = input.ReadTag();
             if (tag == 0 || input.IsAtEnd) return;
 
+            //var codec = FieldCodec.ForInt32(tag);
+
             Value = input.ReadInt32();
         }
     }

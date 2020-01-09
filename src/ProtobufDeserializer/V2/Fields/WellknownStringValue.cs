@@ -1,5 +1,4 @@
-﻿using System;
-using ProtobufDeserializer.Fields;
+﻿using ProtobufDeserializer.Fields;
 using Google.Protobuf;
 
 namespace ProtobufDeserializer.V2.Fields

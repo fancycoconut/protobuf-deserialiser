@@ -9,6 +9,7 @@ namespace ProtobufDeserializer.Fields
         string Name { get; set; }
         int Number { get; set; }
         string TypeName { get; set; }
+        FieldDescriptorProto.Types.Label Label { get; set; }
         FieldDescriptorProto.Types.Type Type { get; set; }
         object Value { get; set; }
 
@@ -20,6 +21,7 @@ namespace ProtobufDeserializer.Fields
         public string Name { get; set; }
         public int Number { get; set; }
         public string TypeName { get; set; }
+        public FieldDescriptorProto.Types.Label Label { get; set; }
         public FieldDescriptorProto.Types.Type Type { get; set; }
         public object Value { get; set; }
 

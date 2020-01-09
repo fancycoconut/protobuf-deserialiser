@@ -10,6 +10,7 @@ namespace ProtobufDeserializer.V2
 {
     public class FieldFactory
     {
+        private const string FieldsNamespace = "ProtobufDeserializer.V2.Fields";
         private static Dictionary<string, Type> typeMap;
         //private static Dictionary<FieldDescriptorProto.Types.Type, Type> typeMap = new Dictionary<FieldDescriptorProto.Types.Type, Type>
         //{
@@ -28,17 +29,17 @@ namespace ProtobufDeserializer.V2
         private static Dictionary<string, Type> InitTypeMap()
         {
             var fieldTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.Namespace == "ProtobufDeserializer.V2.Fields")
+                .Where(t => t.Namespace == FieldsNamespace)
                 .ToList();
 
-            var typeMap = new Dictionary<string, Type>();
+            var map = new Dictionary<string, Type>();
             foreach (var type in fieldTypes)
             {
                 var fieldType = type.GetField("FieldTypeName").GetValue(type);
-                typeMap.Add((string)fieldType, type);
+                map.Add((string)fieldType, type);
             }
 
-            return typeMap;
+            return map;
         }
 
         public static IField Create(FieldDescriptorProto fieldDescriptor, CodedInputStream input)
@@ -60,16 +61,15 @@ namespace ProtobufDeserializer.V2
             if (!typeExists) return null;
 
             var instance = Activator.CreateInstance(type, input);
-            //var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.SetProperty;
 
-            instance.GetType().GetProperty("Name").SetValue(instance, fieldDescriptor.Name);
-            instance.GetType().GetProperty("Number").SetValue(instance, fieldDescriptor.Number);
-            instance.GetType().GetProperty("Type").SetValue(instance, fieldDescriptor.Type);
+            var field = (IField)instance;
+            field.Name = fieldDescriptor.Name;
+            field.Number = fieldDescriptor.Number;
+            field.Label = fieldDescriptor.Label;
+            field.Type = fieldDescriptor.Type;
+            field.TypeName = fieldDescriptor.TypeName;
 
-            instance.GetType().GetProperty("TypeName").SetValue(instance, fieldDescriptor.TypeName);
-            //type.InvokeMember("Name", bindingFlags, Type.DefaultBinder, instance, fieldDescriptor.Name);
-
-            return (IField)instance;
+            return field;
         }
     }
 }

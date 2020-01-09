@@ -11,6 +11,8 @@ namespace ProtobufDeserializer.V2.Fields
 
         public override void ReadValue()
         {
+            if (!base.CurrentFieldNumberIsCorrect()) return;
+
             var tag = input.ReadTag();
             if (tag == 0 || input.IsAtEnd) return;
 

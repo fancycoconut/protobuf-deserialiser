@@ -64,7 +64,7 @@ namespace ProtobufDeserializer.V2
 
             var field = (IField)instance;
             field.Name = fieldDescriptor.Name;
-            field.Number = fieldDescriptor.Number;
+            field.FieldNumber = fieldDescriptor.Number;
             field.Label = fieldDescriptor.Label;
             field.Type = fieldDescriptor.Type;
             field.TypeName = fieldDescriptor.TypeName;

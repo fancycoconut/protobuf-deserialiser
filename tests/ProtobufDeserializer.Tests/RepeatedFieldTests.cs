@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.V2;
@@ -23,6 +24,19 @@ namespace ProtobufDeserializer.Tests
 
             // Assert
             Assert.AreEqual(4, map.Keys.Count);
+
+            var students = ((List<string>) map["Students"]).ToArray();
+            Assert.AreEqual(3, students.Length);
+            Assert.AreEqual("Tommy", students[0]);
+            Assert.AreEqual("Johnny", students[1]);
+            Assert.AreEqual("Phil", students[2]);
+
+            var ages = ((List<int>) map["Ages"]).ToArray();
+            Assert.AreEqual(4, ages.Length);
+            Assert.AreEqual(12, ages[0]);
+            Assert.AreEqual(18, ages[1]);
+            Assert.AreEqual(19, ages[2]);
+            Assert.AreEqual(20, ages[3]);
         }
     }
 }

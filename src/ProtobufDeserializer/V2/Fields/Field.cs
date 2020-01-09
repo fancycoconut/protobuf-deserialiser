@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
@@ -7,7 +8,7 @@ namespace ProtobufDeserializer.Fields
     public interface IField
     {
         string Name { get; set; }
-        int Number { get; set; }
+        int FieldNumber { get; set; }
         string TypeName { get; set; }
         FieldDescriptorProto.Types.Label Label { get; set; }
         FieldDescriptorProto.Types.Type Type { get; set; }
@@ -19,7 +20,7 @@ namespace ProtobufDeserializer.Fields
     public abstract class Field : IField
     {
         public string Name { get; set; }
-        public int Number { get; set; }
+        public int FieldNumber { get; set; }
         public string TypeName { get; set; }
         public FieldDescriptorProto.Types.Label Label { get; set; }
         public FieldDescriptorProto.Types.Type Type { get; set; }
@@ -57,7 +58,39 @@ namespace ProtobufDeserializer.Fields
             // 5	32-bit fixed32, sfixed32, float
 
             var fieldNumber = t >> 3;
-            return this.Number == fieldNumber;
+            return this.FieldNumber == fieldNumber;
+        }
+
+        protected IEnumerable<T> ReadPackedRepeated<T>(Func<T> readInput)
+        {
+            var tag = input.ReadTag();
+            var length = input.ReadLength();
+
+            var list = new List<T>();
+            for (var i = 0; i < length; i++)
+            {
+                list.Add(readInput());
+            }
+
+            return list;
+        }
+
+        protected IEnumerable<T> ReadUnpackedRepeated<T>(Func<T> readInput)
+        {
+            uint tag;
+            var list = new List<T>();
+            while ((tag = input.PeekTag()) != 0)
+            {
+                var t = tag & 0xF8;
+                var fieldNumber = t >> 3;
+
+                if (fieldNumber != this.FieldNumber) break;
+
+                input.ReadTag();
+                list.Add(readInput());
+            }
+
+            return list;
         }
     }
 }

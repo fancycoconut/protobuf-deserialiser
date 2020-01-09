@@ -1,0 +1,15 @@
+﻿syntax = "proto3";
+
+package fph.kato.info.v1beta1;
+
+import "google/protobuf/wrappers.proto";
+
+// Device info.
+message Info {
+	// Device serial number
+	google.protobuf.StringValue serial = 1;
+	// Device family name
+	google.protobuf.StringValue family = 2;
+	// Device model
+	google.protobuf.StringValue model = 3;
+}

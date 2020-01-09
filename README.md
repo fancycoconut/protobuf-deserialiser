@@ -1,1 +1,2 @@
-# protobuf-deserialiser
+# Protobuf Deserialiser
+Inspired by Json.NET from Newtonsoft

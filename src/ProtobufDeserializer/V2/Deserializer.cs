@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf;
-using Google.Protobuf.Collections;
 using Google.Protobuf.Reflection;
 
 namespace ProtobufDeserializer.V2
@@ -70,7 +69,7 @@ namespace ProtobufDeserializer.V2
             return instance;
         }
 
-        private object GetPropertyValueFromMap(string propertyName, IReadOnlyDictionary<string, object> fieldMap)
+        private static object GetPropertyValueFromMap(string propertyName, IReadOnlyDictionary<string, object> fieldMap)
         {
             var fieldExists = fieldMap.TryGetValue(propertyName, out var propValue);
             if (fieldExists) return propValue;
@@ -96,11 +95,10 @@ namespace ProtobufDeserializer.V2
             }
         }
 
-        private IEnumerable<IField> ParseMessages(IEnumerable<DescriptorProto> messages, CodedInputStream input)
+        private static IEnumerable<IField> ParseMessages(IEnumerable<DescriptorProto> messages, CodedInputStream input)
         {
-            var fields = new List<IField>();
-
             // Parse the main message first because we want all the fields to be in order before we start reading the data
+            var fields = new List<IField>();
             foreach (var message in messages)
             {
                 var messageFields = ParseFields(message.Field, input)
@@ -126,7 +124,7 @@ namespace ProtobufDeserializer.V2
             return fields.Select(field => FieldFactory.Create(field, input));
         }
 
-        private void ReadFields(IEnumerable<IField> fields)
+        private static void ReadFields(IEnumerable<IField> fields)
         {
             foreach (var field in fields)
             {

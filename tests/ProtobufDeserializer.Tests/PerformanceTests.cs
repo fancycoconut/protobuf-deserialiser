@@ -186,9 +186,10 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 1000000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
+                
                 var person = deserializer.Deserialize<EdwinPerson>(data);
             }
             watch.Stop();

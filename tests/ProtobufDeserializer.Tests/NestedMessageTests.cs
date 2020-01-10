@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProtobufDeserializer.Tests.Proto;
+using ProtobufDeserializer.Tests.Dtos;
 using ProtobufDeserializer.V2;
 
 namespace ProtobufDeserializer.Tests
@@ -42,7 +42,7 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var foo = deserializer.Deserialize<Foo>(data);
+            var foo = deserializer.Deserialize<Dtos.Foo>(data);
 
             // Assert
             Assert.AreEqual(1, foo.Id);
@@ -85,7 +85,7 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var foo = deserializer.Deserialize<Foo>(data);
+            var foo = deserializer.Deserialize<Dtos.Foo>(data);
 
             // Assert
             Assert.AreEqual(1, foo.Id);

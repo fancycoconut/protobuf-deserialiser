@@ -11,14 +11,8 @@ namespace ProtobufDeserializer.V2
     public class FieldFactory
     {
         private const string FieldsNamespace = "ProtobufDeserializer.V2.Fields";
+
         private static Dictionary<string, Type> typeMap;
-        //private static Dictionary<FieldDescriptorProto.Types.Type, Type> typeMap = new Dictionary<FieldDescriptorProto.Types.Type, Type>
-        //{
-        //    { FieldDescriptorProto.Types.Type.Int32, typeof(Int32Field) },
-        //    { FieldDescriptorProto.Types.Type.String, typeof(StringField) },
-        //    { FieldDescriptorProto.Types.Type.Enum, typeof(EnumField) },
-        //    { FieldDescriptorProto.Types.Type.Message, typeof(MessageField) },
-        //};
 
         static FieldFactory()
         {

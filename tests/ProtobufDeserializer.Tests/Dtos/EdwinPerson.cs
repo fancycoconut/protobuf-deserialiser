@@ -1,4 +1,4 @@
-﻿namespace ProtobufDeserializer.Tests.Proto
+﻿namespace ProtobufDeserializer.Tests.Dtos
 {
     public class EdwinPerson
     {

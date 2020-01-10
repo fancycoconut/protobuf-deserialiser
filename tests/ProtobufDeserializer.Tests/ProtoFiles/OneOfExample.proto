@@ -1,0 +1,13 @@
+﻿syntax = "proto3";
+
+message OneOfExample {
+	string key = 1;
+	oneof value {
+		bool bool_value = 2;
+		int32 int_value = 3;
+		uint32 uint_value = 4;
+		float float_value = 5;
+		string string_value = 6;
+		bytes byte_value = 7;
+	};
+}

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProtobufDeserializer.Tests.Proto;
+using ProtobufDeserializer.Tests.Dtos;
 using ProtobufDeserializer.V2;
 
 namespace ProtobufDeserializer.Tests
@@ -23,7 +23,7 @@ namespace ProtobufDeserializer.Tests
             for (var i = 0; i < 1000000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                var customer = deserializer.Deserialize<Customer>(data);
+                var customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
 
@@ -46,7 +46,7 @@ namespace ProtobufDeserializer.Tests
             for (var i = 0; i < 10000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                var customer = deserializer.Deserialize<Customer>(data);
+                var customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
 
@@ -69,7 +69,7 @@ namespace ProtobufDeserializer.Tests
             for (var i = 0; i < 10000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                var customer = deserializer.Deserialize<Customer>(data);
+                var customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
 
@@ -92,7 +92,7 @@ namespace ProtobufDeserializer.Tests
             for (var i = 0; i < 1000000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                var foo = deserializer.Deserialize<Foo>(data);
+                var foo = deserializer.Deserialize<Dtos.Foo>(data);
             }
             watch.Stop();
 
@@ -115,7 +115,7 @@ namespace ProtobufDeserializer.Tests
             for (var i = 0; i < 100000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                var foo = deserializer.Deserialize<Foo>(data);
+                var foo = deserializer.Deserialize<Dtos.Foo>(data);
             }
             watch.Stop();
 
@@ -138,7 +138,7 @@ namespace ProtobufDeserializer.Tests
             for (var i = 0; i < 10000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                var foo = deserializer.Deserialize<Foo>(data);
+                var foo = deserializer.Deserialize<Dtos.Foo>(data);
             }
             watch.Stop();
 

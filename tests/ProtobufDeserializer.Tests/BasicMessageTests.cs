@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProtobufDeserializer.Tests.Proto;
+using ProtobufDeserializer.Tests.Dtos;
 using ProtobufDeserializer.V2;
 
 namespace ProtobufDeserializer.Tests
@@ -41,7 +41,7 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var customer = deserializer.Deserialize<Customer>(data);
+            var customer = deserializer.Deserialize<Dtos.Customer>(data);
 
             // Assert
             Assert.AreEqual(1, customer.Id);
@@ -63,7 +63,7 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var customer = deserializer.Deserialize<Customer>(data);
+            var customer = deserializer.Deserialize<Dtos.Customer>(data);
 
             // Assert
             Assert.AreEqual(1, customer.Id);
@@ -85,12 +85,12 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var person = deserializer.Deserialize(data);
+            var map = deserializer.Deserialize(data);
 
             // Assert
-            //Assert.AreEqual(0, person.Id);
-            //Assert.AreEqual("Luke Skywalker", person.Name);
-            //Assert.AreEqual(null, person.Email);
+            Assert.AreEqual(null, map["id"]);
+            Assert.AreEqual("Luke Skywalker", map["name"]);
+            Assert.AreEqual("luke.skywalker@jedi.com", map["email"]);
         }
 
         [TestMethod]
@@ -104,7 +104,7 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var person = deserializer.Deserialize<EdwinPerson>(data);
+            var person = deserializer.Deserialize<Dtos.EdwinPerson>(data);
 
             // Assert
             Assert.AreEqual(10, person.Id);

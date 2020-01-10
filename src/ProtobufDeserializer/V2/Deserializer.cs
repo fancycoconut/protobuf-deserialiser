@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf;
@@ -29,34 +30,38 @@ namespace ProtobufDeserializer.V2
             return instance;
         }
 
-        private object ConstructObject(Dictionary<string, object> fieldMap, Type type)
+        private object ConstructObject(IReadOnlyDictionary<string, object> fieldMap, Type type)
         {
             var instance = Activator.CreateInstance(type);
 
             var props = type.GetProperties();
             foreach (var prop in props)
             {
-                if (prop.PropertyType.IsClass
-                    && prop.PropertyType.IsGenericType
-                    && prop.PropertyType.Namespace == "System.Collections.Generic")
+                if (prop.PropertyType.IsClass 
+                    && !prop.PropertyType.IsPrimitive)
                 {
-                    var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
-                    prop.SetValue(instance, propValue);
-                }
-                else if (prop.PropertyType.IsClass 
-                    && prop.PropertyType != typeof(string))
-                {
+                    // Lists and collections
+                    if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null 
+                        && !prop.PropertyType.IsArray)
+                    {
+                        var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
+                        prop.SetValue(instance, propValue);
+                        continue;
+                    }
+
+                    if (prop.PropertyType.IsArray)
+                    {
+                        var list = GetPropertyValueFromMap(prop.Name, fieldMap);
+                        var toArray = list.GetType().GetMethod("ToArray");
+                        prop.SetValue(instance, toArray?.Invoke(list, null));
+                        continue;
+                    }
+
                     var classObject = ConstructObject(fieldMap, prop.PropertyType);
                     prop.SetValue(instance, classObject);
                 }
                 else
                 {
-                    //var fieldExists = fieldMap.TryGetValue(prop.Name, out var propValue);
-                    //if (!fieldExists)
-                    //{
-                    //    fieldMap.TryGetValue(prop.Name.ToLower(), out propValue);
-                    //}
-
                     var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
                     prop.SetValue(instance, propValue);
                 }
@@ -65,25 +70,16 @@ namespace ProtobufDeserializer.V2
             return instance;
         }
 
-        private object GetPropertyValueFromMap(string propertyName, Dictionary<string, object> fieldMap)
+        private object GetPropertyValueFromMap(string propertyName, IReadOnlyDictionary<string, object> fieldMap)
         {
-            // TODO: Refactor this....
             var fieldExists = fieldMap.TryGetValue(propertyName, out var propValue);
-            if (!fieldExists)
-            {
-                var lowerCasedFieldExists = fieldMap.TryGetValue(propertyName.ToLower(), out propValue);
-                if (!lowerCasedFieldExists)
-                {
-                    var upperCasedFieldExists = fieldMap.TryGetValue(propertyName.ToUpper(), out propValue);
-                    if (!upperCasedFieldExists) return null;
+            if (fieldExists) return propValue;
 
-                    return propValue;
-                }
+            var lowerCasedFieldExists = fieldMap.TryGetValue(propertyName.ToLower(), out propValue);
+            if (lowerCasedFieldExists) return propValue;
 
-                return propValue;
-            }
-
-            return propValue;
+            var upperCasedFieldExists = fieldMap.TryGetValue(propertyName.ToUpper(), out propValue);
+            return upperCasedFieldExists ? propValue : null;
         }
 
         public Dictionary<string, object> Deserialize(byte[] data)

@@ -18,12 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ProtoDescriptors\" />
     <Folder Include="ProtoClasses\" />
   </ItemGroup>
 
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="C:\Users\wongka\.nuget\packages\google.protobuf.tools\3.11.2\tools\windows_x64\protoc.exe -I=$(ProjectDir)\ProtoFiles --csharp_out=$(ProjectDir)\ProtoClasses $(ProjectDir)\ProtoFiles\*.proto" />
+    <Exec Command="echo Re-generate c sharp classes for all proto files&#xD;&#xA;C:\Users\wongka\.nuget\packages\google.protobuf.tools\3.11.2\tools\windows_x64\protoc.exe -I=$(ProjectDir)\ProtoFiles --csharp_out=$(ProjectDir)\ProtoClasses $(ProjectDir)\ProtoFiles\*.proto" />
   </Target>
 
 </Project>

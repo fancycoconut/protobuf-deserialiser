@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using ProtobufDeserializer.V2.Types;
 
 namespace ProtobufDeserializer.V2
 {

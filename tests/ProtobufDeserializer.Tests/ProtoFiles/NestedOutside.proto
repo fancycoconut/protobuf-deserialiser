@@ -1,0 +1,14 @@
+﻿syntax = "proto3";
+
+message FooOutside {
+	int32 Id = 1;
+	string FirstName = 2;
+	string Surname = 3;
+    
+	BarOutside NestedMessage = 4;
+}
+
+message BarOutside {
+	string Star = 1;
+	string Fighter = 2;
+}

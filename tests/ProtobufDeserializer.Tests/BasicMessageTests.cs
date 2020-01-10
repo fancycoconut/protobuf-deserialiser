@@ -1,7 +1,9 @@
 using System;
 using System.Linq;
+using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Dtos;
+using ProtobufDeserializer.Tests.Helpers;
 using ProtobufDeserializer.V2;
 
 namespace ProtobufDeserializer.Tests
@@ -13,10 +15,16 @@ namespace ProtobufDeserializer.Tests
         public void BasicMessageToDictionary()
         {
             // Arrange
-            var customerData = "8,1,18,5,75,97,119,97,105,26,4,87,111,110,103,32,1".Split(',');
-            var customerMessageDescriptor = "0A BE 01 0A 0E 43 75 73 74 6F 6D 65 72 2E 70 72 6F 74 6F 22 A3 01 0A 08 43 75 73 74 6F 6D 65 72 12 0E 0A 02 49 64 18 01 20 01 28 05 52 02 49 64 12 1C 0A 09 46 69 72 73 74 4E 61 6D 65 18 02 20 01 28 09 52 09 46 69 72 73 74 4E 61 6D 65 12 18 0A 07 53 75 72 6E 61 6D 65 18 03 20 01 28 09 52 07 53 75 72 6E 61 6D 65 12 2A 0A 04 54 79 70 65 18 04 20 01 28 0E 32 16 2E 43 75 73 74 6F 6D 65 72 2E 43 75 73 74 6F 6D 65 72 54 79 70 65 52 04 54 79 70 65 22 23 0A 0C 43 75 73 74 6F 6D 65 72 54 79 70 65 12 0A 0A 06 4E 6F 72 6D 61 6C 10 00 12 07 0A 03 56 49 50 10 01 62 06 70 72 6F 74 6F 33".Split(' ');
-            var data = customerData.Select(x => Convert.ToByte(x)).ToArray();
-            var descriptor = customerMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
+            var customer = new Customer
+            {
+                Id = 1,
+                FirstName = "Kawai",
+                Surname = "Wong",
+                Type = Customer.Types.CustomerType.Vip
+            };
+            
+            var data = customer.ToByteArray();
+            var descriptor = DescriptorHelper.Read("Customer.pb");
 
             // Act
             var deserializer = new Deserializer(descriptor);
@@ -24,29 +32,35 @@ namespace ProtobufDeserializer.Tests
 
             // Assert
             Assert.AreEqual(4, map.Keys.Count);
-            Assert.AreEqual(1, map["Id"]);
-            Assert.AreEqual("Kawai", map["FirstName"]);
-            Assert.AreEqual("Wong", map["Surname"]);
-            Assert.AreEqual(1, map["Type"]);
+            Assert.AreEqual(customer.Id, map["Id"]);
+            Assert.AreEqual(customer.FirstName, map["FirstName"]);
+            Assert.AreEqual(customer.Surname, map["Surname"]);
+            Assert.AreEqual((int)customer.Type, map["Type"]);
         }
 
         [TestMethod]
         public void BasicMessageToObject()
         {
             // Arrange
-            var customerData = "8,1,18,5,75,97,119,97,105,26,4,87,111,110,103,32,1".Split(',');
-            var customerMessageDescriptor = "0A BE 01 0A 0E 43 75 73 74 6F 6D 65 72 2E 70 72 6F 74 6F 22 A3 01 0A 08 43 75 73 74 6F 6D 65 72 12 0E 0A 02 49 64 18 01 20 01 28 05 52 02 49 64 12 1C 0A 09 46 69 72 73 74 4E 61 6D 65 18 02 20 01 28 09 52 09 46 69 72 73 74 4E 61 6D 65 12 18 0A 07 53 75 72 6E 61 6D 65 18 03 20 01 28 09 52 07 53 75 72 6E 61 6D 65 12 2A 0A 04 54 79 70 65 18 04 20 01 28 0E 32 16 2E 43 75 73 74 6F 6D 65 72 2E 43 75 73 74 6F 6D 65 72 54 79 70 65 52 04 54 79 70 65 22 23 0A 0C 43 75 73 74 6F 6D 65 72 54 79 70 65 12 0A 0A 06 4E 6F 72 6D 61 6C 10 00 12 07 0A 03 56 49 50 10 01 62 06 70 72 6F 74 6F 33".Split(' ');
-            var data = customerData.Select(x => Convert.ToByte(x)).ToArray();
-            var descriptor = customerMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
+            var expectedCustomer = new Customer
+            {
+                Id = 1,
+                FirstName = "Kawai",
+                Surname = "Wong",
+                Type = Customer.Types.CustomerType.Vip
+            };
+
+            var data = expectedCustomer.ToByteArray();
+            var descriptor = DescriptorHelper.Read("Customer.pb");
 
             // Act
             var deserializer = new Deserializer(descriptor);
             var customer = deserializer.Deserialize<Dtos.Customer>(data);
 
             // Assert
-            Assert.AreEqual(1, customer.Id);
-            Assert.AreEqual("Kawai", customer.FirstName);
-            Assert.AreEqual("Wong", customer.Surname);
+            Assert.AreEqual(expectedCustomer.Id, customer.Id);
+            Assert.AreEqual(expectedCustomer.FirstName, customer.FirstName);
+            Assert.AreEqual(expectedCustomer.Surname, customer.Surname);
             Assert.AreEqual(CustomerType.Vip, customer.Type);
             // Should ignore fields that don't exist and default them
             Assert.AreEqual(null, customer.LastName);
@@ -56,18 +70,23 @@ namespace ProtobufDeserializer.Tests
         public void BasicMessageMiddleFieldNotSetToObject()
         {
             // Arrange
-            var customerData = "8,1,18,5,75,97,119,97,105,32,1".Split(',');
-            var customerMessageDescriptor = "0A BE 01 0A 0E 43 75 73 74 6F 6D 65 72 2E 70 72 6F 74 6F 22 A3 01 0A 08 43 75 73 74 6F 6D 65 72 12 0E 0A 02 49 64 18 01 20 01 28 05 52 02 49 64 12 1C 0A 09 46 69 72 73 74 4E 61 6D 65 18 02 20 01 28 09 52 09 46 69 72 73 74 4E 61 6D 65 12 18 0A 07 53 75 72 6E 61 6D 65 18 03 20 01 28 09 52 07 53 75 72 6E 61 6D 65 12 2A 0A 04 54 79 70 65 18 04 20 01 28 0E 32 16 2E 43 75 73 74 6F 6D 65 72 2E 43 75 73 74 6F 6D 65 72 54 79 70 65 52 04 54 79 70 65 22 23 0A 0C 43 75 73 74 6F 6D 65 72 54 79 70 65 12 0A 0A 06 4E 6F 72 6D 61 6C 10 00 12 07 0A 03 56 49 50 10 01 62 06 70 72 6F 74 6F 33".Split(' ');
-            var data = customerData.Select(x => Convert.ToByte(x)).ToArray();
-            var descriptor = customerMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
+            var expectedCustomer = new Customer
+            {
+                Id = 1,
+                FirstName = "Kawai",
+                Type = Customer.Types.CustomerType.Vip
+            };
+
+            var data = expectedCustomer.ToByteArray();
+            var descriptor = DescriptorHelper.Read("Customer.pb");
 
             // Act
             var deserializer = new Deserializer(descriptor);
             var customer = deserializer.Deserialize<Dtos.Customer>(data);
 
             // Assert
-            Assert.AreEqual(1, customer.Id);
-            Assert.AreEqual("Kawai", customer.FirstName);
+            Assert.AreEqual(expectedCustomer.Id, customer.Id);
+            Assert.AreEqual(expectedCustomer.FirstName, customer.FirstName);
             Assert.AreEqual(null, customer.Surname);
             Assert.AreEqual(CustomerType.Vip, customer.Type);
             // Should ignore fields that don't exist and default them
@@ -75,7 +94,53 @@ namespace ProtobufDeserializer.Tests
         }
 
         [TestMethod]
-        public void EdwinsMessageWithMiddleFieldNotSetToObject()
+        public void EdwinsMessageWithMiddleFieldNotSetToMap()
+        {
+            // Arrange
+            var person = new Person
+            {
+                Name = "Luke Skywalker",
+                Email = "luke.skywalker@jedi.com"
+            };
+
+            var data = person.ToByteArray();
+            var descriptor = DescriptorHelper.Read("EdwinsExample.pb");
+
+            // Act
+            var deserializer = new Deserializer(descriptor);
+            var map = deserializer.Deserialize(data);
+
+            // Assert
+            Assert.AreEqual(null, map["id"]);
+            Assert.AreEqual(person.Name, map["name"]);
+            Assert.AreEqual(person.Email, map["email"]);
+        }
+
+        [TestMethod]
+        public void EdwinsMessageWithLastFieldNotSetToMap()
+        {
+            // Arrange
+            var expectedPerson = new Person
+            {
+                Id = 10,
+                Name = "Luke Skywalker"
+            };
+
+            var data = expectedPerson.ToByteArray();
+            var descriptor = DescriptorHelper.Read("EdwinsExample.pb");
+
+            // Act
+            var deserializer = new Deserializer(descriptor);
+            var person = deserializer.Deserialize<Dtos.EdwinPerson>(data);
+
+            // Assert
+            Assert.AreEqual(expectedPerson.Id, person.Id);
+            Assert.AreEqual(expectedPerson.Name, person.Name);
+            Assert.AreEqual(null, person.Email);
+        }
+
+        [TestMethod]
+        public void EdwinsMessageWithMiddleFieldNotSetToObjectOG()
         {
             // Arrange
             var personData = "0A 0E 4C 75 6B 65 20 53 6B 79 77 61 6C 6B 65 72 1A 17 6C 75 6B 65 2E 73 6B 79 77 61 6C 6B 65 72 40 6A 65 64 69 2E 63 6F 6D".Split(' ');
@@ -94,7 +159,7 @@ namespace ProtobufDeserializer.Tests
         }
 
         [TestMethod]
-        public void EdwinsMessageWithLastFieldNotSetToObject()
+        public void EdwinsMessageWithLastFieldNotSetToObjectOG()
         {
             // Arrange
             var personData = "0A 0E 4C 75 6B 65 20 53 6B 79 77 61 6C 6B 65 72 10 0A".Split(' ');

@@ -13,8 +13,4 @@
     <PackageReference Include="Google.Protobuf" Version="3.11.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="V2\WellKnownTypes\" />
-  </ItemGroup>
-
 </Project>

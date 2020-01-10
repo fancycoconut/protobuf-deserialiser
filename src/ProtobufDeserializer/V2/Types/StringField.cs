@@ -1,8 +1,7 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using ProtobufDeserializer.Fields;
 
-namespace ProtobufDeserializer.V2.Fields
+namespace ProtobufDeserializer.V2.Types
 {
     public class StringField : Field
     {

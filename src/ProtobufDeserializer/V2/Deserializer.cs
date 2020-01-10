@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using ProtobufDeserializer.Fields;
+using ProtobufDeserializer.V2.Types;
 
 namespace ProtobufDeserializer.V2
 {
@@ -119,7 +119,7 @@ namespace ProtobufDeserializer.V2
         {
             foreach (var field in fields)
             {
-                field.ReadValue();
+                field?.ReadValue();
             }
         }
     }

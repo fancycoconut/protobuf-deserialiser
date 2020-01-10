@@ -4,13 +4,14 @@ using System.Linq;
 using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using ProtobufDeserializer.Fields;
+using ProtobufDeserializer.V2.Types;
 
 namespace ProtobufDeserializer.V2
 {
     public class FieldFactory
     {
-        private const string FieldsNamespace = "ProtobufDeserializer.V2.Fields";
+        private const string FieldsNamespace = "ProtobufDeserializer.V2.Types";
+        private const string WellKnownTypesNamespace = "ProtobufDeserializer.V2.WellKnownTypes";
 
         private static Dictionary<string, Type> typeMap;
 
@@ -23,7 +24,7 @@ namespace ProtobufDeserializer.V2
         private static Dictionary<string, Type> InitTypeMap()
         {
             var fieldTypes = Assembly.GetExecutingAssembly().GetTypes()
-                .Where(t => t.Namespace == FieldsNamespace)
+                .Where(t => t.Namespace == FieldsNamespace || t.Namespace == WellKnownTypesNamespace)
                 .ToList();
 
             var map = new Dictionary<string, Type>();

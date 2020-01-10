@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf;
+using Google.Protobuf.Collections;
 using Google.Protobuf.Reflection;
 
 namespace ProtobufDeserializer.V2
@@ -88,30 +89,41 @@ namespace ProtobufDeserializer.V2
                 var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
                 var descriptor = fileDescriptorSet.File[0];
 
-                var fields = ParseFields(descriptor.MessageType, input).ToList();
+                var fields = ParseMessages(descriptor.MessageType, input).ToList();
                 ReadFields(fields);
 
                 return fields.ToDictionary(field => field.Name, field => field.Value);
             }
         }
 
-        private IEnumerable<IField> ParseFields(IEnumerable<DescriptorProto> messages, CodedInputStream input)
+        private IEnumerable<IField> ParseMessages(IEnumerable<DescriptorProto> messages, CodedInputStream input)
         {
-            foreach (var messageType in messages)
-            {
-                foreach (var field in messageType.Field)
-                {
-                    yield return FieldFactory.Create(field, input);
-                }
+            var fields = new List<IField>();
 
-                foreach (var nestedMessageType in messageType.NestedType)
+            // Parse the main message first because we want all the fields to be in order before we start reading the data
+            foreach (var message in messages)
+            {
+                var messageFields = ParseFields(message.Field, input)
+                    .OrderBy(f => f.FieldNumber)
+                    .ToList();
+
+                fields.AddRange(messageFields);
+                foreach (var nestedMessageType in message.NestedType)
                 {
-                    foreach (var field in nestedMessageType.Field)
-                    {
-                        yield return FieldFactory.Create(field, input);
-                    }
+                    var nestedFields = ParseFields(nestedMessageType.Field, input)
+                        .OrderBy(f => f.FieldNumber)
+                        .ToList();
+
+                    fields.AddRange(nestedFields);
                 }
             }
+
+            return fields;
+        }
+
+        private static IEnumerable<IField> ParseFields(IEnumerable<FieldDescriptorProto> fields, CodedInputStream input)
+        {
+            return fields.Select(field => FieldFactory.Create(field, input));
         }
 
         private void ReadFields(IEnumerable<IField> fields)

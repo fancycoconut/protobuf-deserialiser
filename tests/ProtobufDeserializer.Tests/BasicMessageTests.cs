@@ -94,7 +94,7 @@ namespace ProtobufDeserializer.Tests
         }
 
         [TestMethod]
-        public void EdwinsMessageWithMiddleFieldNotSetToMap()
+        public void EdwinsMessageWithJumbledUpFieldsMiddleFieldNotSetToMap()
         {
             // Arrange
             var person = new Person
@@ -117,7 +117,7 @@ namespace ProtobufDeserializer.Tests
         }
 
         [TestMethod]
-        public void EdwinsMessageWithLastFieldNotSetToMap()
+        public void EdwinsMessageWithJumbledUpFieldsLastFieldNotSetToMap()
         {
             // Arrange
             var expectedPerson = new Person

@@ -88,7 +88,7 @@ namespace ProtobufDeserializer.V2
                 var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
                 var descriptor = fileDescriptorSet.File[0];
 
-                var fields = ParseMessages(descriptor.MessageType, input).ToList();
+                var fields = ParseMessages(descriptor.MessageType, input);
                 ReadFields(fields);
 
                 return fields.ToDictionary(field => field.Name, field => field.Value);
@@ -98,30 +98,34 @@ namespace ProtobufDeserializer.V2
         private static IEnumerable<IField> ParseMessages(IEnumerable<DescriptorProto> messages, CodedInputStream input)
         {
             // Parse the main message first because we want all the fields to be in order before we start reading the data
+            var i = 0;
             var fields = new List<IField>();
             foreach (var message in messages)
             {
-                var messageFields = ParseFields(message.Field, input)
+                var isNestedMessage = i > 0;
+                var messageFields = ParseFields(message.Name, isNestedMessage, message.Field, input)
                     .OrderBy(f => f.FieldNumber)
                     .ToList();
 
                 fields.AddRange(messageFields);
                 foreach (var nestedMessageType in message.NestedType)
                 {
-                    var nestedFields = ParseFields(nestedMessageType.Field, input)
+                    var nestedFields = ParseFields(nestedMessageType.Name, true, nestedMessageType.Field, input)
                         .OrderBy(f => f.FieldNumber)
                         .ToList();
 
                     fields.AddRange(nestedFields);
                 }
+
+                i++;
             }
 
             return fields;
         }
 
-        private static IEnumerable<IField> ParseFields(IEnumerable<FieldDescriptorProto> fields, CodedInputStream input)
+        private static IEnumerable<IField> ParseFields(string messageName, bool isNestedMessageField, IEnumerable<FieldDescriptorProto> fields, CodedInputStream input)
         {
-            return fields.Select(field => FieldFactory.Create(field, input));
+            return fields.Select(field => FieldFactory.Create(messageName, isNestedMessageField, field, input));
         }
 
         private static void ReadFields(IEnumerable<IField> fields)

@@ -36,20 +36,20 @@ namespace ProtobufDeserializer.V2
             return map;
         }
 
-        public static IField Create(FieldDescriptorProto fieldDescriptor, CodedInputStream input)
+        public static IField Create(string messageName, bool isNestedMessageField, FieldDescriptorProto fieldDescriptor, CodedInputStream input)
         {
             if (!string.IsNullOrEmpty(fieldDescriptor.TypeName)
                 && fieldDescriptor.Type == FieldDescriptorProto.Types.Type.Message
                 && typeMap.ContainsKey(fieldDescriptor.TypeName))
             {
-                return ConstructFieldObject(fieldDescriptor.TypeName, fieldDescriptor, input);
+                return ConstructFieldObject(fieldDescriptor.TypeName, messageName, isNestedMessageField, fieldDescriptor, input);
             }
 
             var typeName = fieldDescriptor.Type.ToString();
-            return ConstructFieldObject(typeName, fieldDescriptor, input);
+            return ConstructFieldObject(typeName, messageName, isNestedMessageField, fieldDescriptor, input);
         }
 
-        private static IField ConstructFieldObject(string typeName, FieldDescriptorProto fieldDescriptor, CodedInputStream input)
+        private static IField ConstructFieldObject(string typeName, string messageName, bool isNestedMessageField, FieldDescriptorProto fieldDescriptor, CodedInputStream input)
         {
             var typeExists = typeMap.TryGetValue(typeName, out var type);
             if (!typeExists) return null;
@@ -62,6 +62,8 @@ namespace ProtobufDeserializer.V2
             field.Label = fieldDescriptor.Label;
             field.Type = fieldDescriptor.Type;
             field.TypeName = fieldDescriptor.TypeName;
+            field.ParentMessageName = messageName;
+            field.IsNestedMessageField = isNestedMessageField;
 
             return field;
         }

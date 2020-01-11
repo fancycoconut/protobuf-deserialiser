@@ -14,6 +14,9 @@ namespace ProtobufDeserializer.V2
         FieldDescriptorProto.Types.Type Type { get; set; }
         object Value { get; set; }
 
+        string ParentMessageName { get; set; }
+        bool IsNestedMessageField { get; set; }
+
         void ReadValue();
     }
 
@@ -25,6 +28,9 @@ namespace ProtobufDeserializer.V2
         public FieldDescriptorProto.Types.Label Label { get; set; }
         public FieldDescriptorProto.Types.Type Type { get; set; }
         public object Value { get; set; }
+
+        public string ParentMessageName { get; set; }
+        public bool IsNestedMessageField { get; set; }
 
         internal readonly CodedInputStream input;
 

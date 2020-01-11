@@ -86,7 +86,6 @@ namespace ProtobufDeserializer.V1
                         default:
                             // No field mapping found then skip
                             throw new Exception("Unknown type encountered...");
-                            break;
                     }
                 }
 

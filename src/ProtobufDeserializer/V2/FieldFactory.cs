@@ -62,7 +62,7 @@ namespace ProtobufDeserializer.V2
             field.Label = fieldDescriptor.Label;
             field.Type = fieldDescriptor.Type;
             field.TypeName = fieldDescriptor.TypeName;
-            field.ParentMessageName = messageName;
+            field.MessageName = messageName;
             field.IsNestedMessageField = isNestedMessageField;
 
             return field;

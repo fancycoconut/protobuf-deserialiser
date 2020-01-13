@@ -24,6 +24,9 @@ namespace ProtobufDeserializer.V2
 
         public IEnumerable<Type> GetMessageTypes()
         {
+            AssemblyBuilder dynamicAssembly 
+
+
             //var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("MyDynamicAssembly"), AssemblyBuilderAccess.Run);
             //var dynamicModule = dynamicAssembly.DefineDynamicModule("MyDynamicAssemblyModule");
 

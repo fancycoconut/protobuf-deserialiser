@@ -10,7 +10,7 @@ namespace ProtobufDeserializer.Tests
     public class OneOfTests
     {
         [TestMethod]
-        public void BasicOneOfWithOneFieldUsedToDictionaryTest()
+        public void BasicOneOfWithOneFieldUsedToObjectTest()
         {
             // Arrange
             var oneOfMessage = new OneOfExample
@@ -38,7 +38,7 @@ namespace ProtobufDeserializer.Tests
         }
 
         [TestMethod]
-        public void BasicOneOfWithTwoFieldsUsedToDictionaryTest()
+        public void BasicOneOfWithTwoFieldsUsedToObjectTest()
         {
             // Arrange
             var oneOfMessage = new OneOfExample

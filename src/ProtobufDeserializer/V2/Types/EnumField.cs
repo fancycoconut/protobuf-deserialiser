@@ -7,16 +7,14 @@ namespace ProtobufDeserializer.V2.Types
     {
         public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Enum);
 
-        public EnumField(CodedInputStream input) : base(input) { }
-
-        public override void ReadValue()
+        public override object ReadValue(CodedInputStream input)
         {
-            if (!base.CurrentFieldNumberIsCorrect()) return;
+            if (!base.CurrentFieldNumberIsCorrect(input)) return null;
 
             var tag = input.ReadTag();
-            if (tag == 0 || input.IsAtEnd) return;
+            if (tag == 0 || input.IsAtEnd) return null;
 
-            Value = input.ReadEnum();
+            return input.ReadEnum();
         }
     }
 }

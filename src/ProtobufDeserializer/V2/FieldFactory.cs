@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
 namespace ProtobufDeserializer.V2
@@ -36,25 +35,25 @@ namespace ProtobufDeserializer.V2
             return map;
         }
 
-        public static IField Create(string messageName, bool isNestedMessageField, FieldDescriptorProto fieldDescriptor, CodedInputStream input)
+        public static IField Create(string messageName, FieldDescriptorProto fieldDescriptor)
         {
             if (!string.IsNullOrEmpty(fieldDescriptor.TypeName)
                 && fieldDescriptor.Type == FieldDescriptorProto.Types.Type.Message
                 && typeMap.ContainsKey(fieldDescriptor.TypeName))
             {
-                return ConstructFieldObject(fieldDescriptor.TypeName, messageName, isNestedMessageField, fieldDescriptor, input);
+                return ConstructFieldObject(fieldDescriptor.TypeName, messageName, fieldDescriptor);
             }
 
             var typeName = fieldDescriptor.Type.ToString();
-            return ConstructFieldObject(typeName, messageName, isNestedMessageField, fieldDescriptor, input);
+            return ConstructFieldObject(typeName, messageName, fieldDescriptor);
         }
 
-        private static IField ConstructFieldObject(string typeName, string messageName, bool isNestedMessageField, FieldDescriptorProto fieldDescriptor, CodedInputStream input)
+        private static IField ConstructFieldObject(string typeName, string messageName, FieldDescriptorProto fieldDescriptor)
         {
             var typeExists = typeMap.TryGetValue(typeName, out var type);
-            if (!typeExists) return null;
+            if (!typeExists) throw new NotImplementedException($"{typeName} has not been implemented yet and is therefore not supported..");
 
-            var instance = Activator.CreateInstance(type, input);
+            var instance = Activator.CreateInstance(type);
 
             var field = (IField)instance;
             field.Name = fieldDescriptor.Name;
@@ -63,7 +62,6 @@ namespace ProtobufDeserializer.V2
             field.Type = fieldDescriptor.Type;
             field.TypeName = fieldDescriptor.TypeName;
             field.MessageName = messageName;
-            field.IsNestedMessageField = isNestedMessageField;
 
             return field;
         }

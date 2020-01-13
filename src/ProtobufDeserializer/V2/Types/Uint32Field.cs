@@ -7,23 +7,20 @@ namespace ProtobufDeserializer.V2.Types
     {
         public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Uint32);
 
-        public UInt32Field(CodedInputStream input) : base(input) { }
-
-        public override void ReadValue()
+        public override object ReadValue(CodedInputStream input)
         {
-            if (!base.CurrentFieldNumberIsCorrect()) return;
+            if (!base.CurrentFieldNumberIsCorrect(input)) return null;
 
             if (Label == FieldDescriptorProto.Types.Label.Repeated)
             {
                 // TODO Figure out if it is packed or unpacked
-                Value = base.ReadPackedRepeated(input.ReadUInt32);
-                return;
+                return base.ReadPackedRepeated(input, input.ReadUInt32);
             }
 
             var tag = input.ReadTag();
-            if (tag == 0 || input.IsAtEnd) return;
+            if (tag == 0 || input.IsAtEnd) return null;
 
-            Value = input.ReadUInt32();
+            return input.ReadUInt32();
         }
     }
 }

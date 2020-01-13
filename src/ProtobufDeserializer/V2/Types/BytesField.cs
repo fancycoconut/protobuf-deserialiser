@@ -1,4 +1,5 @@
-﻿using Google.Protobuf;
+﻿using System;
+using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
 namespace ProtobufDeserializer.V2.Types
@@ -7,23 +8,21 @@ namespace ProtobufDeserializer.V2.Types
     {
         public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Bytes);
 
-        public BytesField(CodedInputStream input) : base(input) { }
-
-        public override void ReadValue()
+        public override object ReadValue(CodedInputStream input)
         {
-            if (!base.CurrentFieldNumberIsCorrect()) return;
+            if (!base.CurrentFieldNumberIsCorrect(input)) return null;
 
             if (Label == FieldDescriptorProto.Types.Label.Repeated)
             {
+                throw new NotImplementedException();
                 // TODO Figure out if it is packed or unpacked
                 //Value = base.ReadPackedRepeated(input.ReadBytes);
-                return;
             }
 
             var tag = input.ReadTag();
-            if (tag == 0 || input.IsAtEnd) return;
+            if (tag == 0 || input.IsAtEnd) return null;
 
-            Value = input.ReadBytes();
+            return input.ReadBytes();
         }
     }
 }

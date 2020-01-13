@@ -15,10 +15,12 @@ namespace ProtobufDeserializer.Example
             var data = personData.Select(x => Convert.ToByte(x, 16)).ToArray();
             var descriptor = personMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
 
-            var deserializer = new Deserializer(descriptor);
-            var map = deserializer.Deserialize(data);
+            for (var i = 0; i < 1000000; i++)
+            {
+                var deserializer = new Deserializer(descriptor);
+                deserializer.Deserialize(data);
+            }
 
-            Console.WriteLine(map["email"]);
             Console.ReadLine();
         }
     }

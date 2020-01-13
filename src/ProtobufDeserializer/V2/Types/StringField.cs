@@ -7,19 +7,14 @@ namespace ProtobufDeserializer.V2.Types
     {
         public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.String);
 
-        public StringField(CodedInputStream input) : base(input)
+        public override object ReadValue(CodedInputStream input)
         {
-        }
-
-        public override void ReadValue()
-        {
-            if (!base.CurrentFieldNumberIsCorrect()) return;
+            if (!base.CurrentFieldNumberIsCorrect(input)) return null;
 
             if (Label == FieldDescriptorProto.Types.Label.Repeated)
             {
                 // TODO Figure out if it is packed or unpacked
-                Value = base.ReadUnpackedRepeated(input.ReadString);
-                return;
+                return base.ReadUnpackedRepeated(input, input.ReadString);
             }
 
             // Should we use field codecs or read off input?...
@@ -28,9 +23,9 @@ namespace ProtobufDeserializer.V2.Types
             // OR
 
             var tag = input.ReadTag();
-            if (tag == 0 || input.IsAtEnd) return;
+            if (tag == 0 || input.IsAtEnd) return null;
 
-            Value = input.ReadString();
+            return input.ReadString();
         }
 
         //private IEnumerable<string> ReadUnpackedRepeated()

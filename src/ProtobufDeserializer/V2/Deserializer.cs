@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Reflection.Emit;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
@@ -20,6 +21,31 @@ namespace ProtobufDeserializer.V2
             messageSchema = GetMessageSchema();
             propertiesCache = new Dictionary<Type, PropertyInfo[]>();
         }
+
+        public IEnumerable<Type> GetMessageTypes()
+        {
+            //var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("MyDynamicAssembly"), AssemblyBuilderAccess.Run);
+            //var dynamicModule = dynamicAssembly.DefineDynamicModule("MyDynamicAssemblyModule");
+
+            var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
+            var descriptor = fileDescriptorSet.File[0];
+
+            var types = new List<Type>();
+            foreach (var message in descriptor.MessageType)
+            {
+                foreach (var nestedMessage in message.NestedType)
+                {
+
+                }
+            }
+
+            return types;
+        }
+
+        //private Type GetAnonymousType()
+        //{
+
+        //}
 
         public T Deserialize<T>(byte[] data)
         {

@@ -18,10 +18,17 @@ namespace ProtobufDeserializer.Example
             for (var i = 0; i < 1000000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                deserializer.Deserialize(data);
+                deserializer.Deserialize<EdwinTestScenario1>(data);
             }
 
             Console.ReadLine();
+        }
+
+        private class EdwinTestScenario1
+        {
+            public string Name { get; set; }
+            public int Id { get; set; }
+            public string Email { get; set; }
         }
     }
 }

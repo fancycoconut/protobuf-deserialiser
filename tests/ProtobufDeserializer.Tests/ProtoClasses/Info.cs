@@ -24,13 +24,16 @@ namespace Fph.Kato.Info.V1Beta1 {
     static InfoReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "CgpJbmZvLnByb3RvEhVmcGgua2F0by5pbmZvLnYxYmV0YTEaHmdvb2dsZS9w",
-            "cm90b2J1Zi93cmFwcGVycy5wcm90byKPAQoESW5mbxIsCgZzZXJpYWwYASAB",
-            "KAsyHC5nb29nbGUucHJvdG9idWYuU3RyaW5nVmFsdWUSLAoGZmFtaWx5GAIg",
-            "ASgLMhwuZ29vZ2xlLnByb3RvYnVmLlN0cmluZ1ZhbHVlEisKBW1vZGVsGAMg",
-            "ASgLMhwuZ29vZ2xlLnByb3RvYnVmLlN0cmluZ1ZhbHVlYgZwcm90bzM="));
+            "CgpJbmZvLnByb3RvEhVmcGgua2F0by5pbmZvLnYxYmV0YTEaG2dvb2dsZS9w",
+            "cm90b2J1Zi9lbXB0eS5wcm90bxoeZ29vZ2xlL3Byb3RvYnVmL3dyYXBwZXJz",
+            "LnByb3RvIo8BCgRJbmZvEiwKBnNlcmlhbBgBIAEoCzIcLmdvb2dsZS5wcm90",
+            "b2J1Zi5TdHJpbmdWYWx1ZRIsCgZmYW1pbHkYAiABKAsyHC5nb29nbGUucHJv",
+            "dG9idWYuU3RyaW5nVmFsdWUSKwoFbW9kZWwYAyABKAsyHC5nb29nbGUucHJv",
+            "dG9idWYuU3RyaW5nVmFsdWUySgoJRGlzY292ZXJ5Ej0KC0dldFByb2ZpbGVz",
+            "EhYuZ29vZ2xlLnByb3RvYnVmLkVtcHR5GhYuZ29vZ2xlLnByb3RvYnVmLkVt",
+            "cHR5YgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, },
+          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.EmptyReflection.Descriptor, global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Fph.Kato.Info.V1Beta1.Info), global::Fph.Kato.Info.V1Beta1.Info.Parser, new[]{ "Serial", "Family", "Model" }, null, null, null, null)
           }));

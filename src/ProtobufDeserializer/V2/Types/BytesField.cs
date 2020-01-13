@@ -22,7 +22,7 @@ namespace ProtobufDeserializer.V2.Types
             var tag = input.ReadTag();
             if (tag == 0 || input.IsAtEnd) return null;
 
-            return input.ReadBytes();
+            return input.ReadBytes().ToByteArray();
         }
     }
 }

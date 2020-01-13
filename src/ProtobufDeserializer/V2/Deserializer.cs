@@ -21,11 +21,6 @@ namespace ProtobufDeserializer.V2
             propertiesCache = new Dictionary<Type, PropertyInfo[]>();
         }
 
-        public Dictionary<string, object> Deserialize(byte[] data)
-        {
-            throw new NotImplementedException("Not supported anymore...");
-        }
-
         public T Deserialize<T>(byte[] data)
         {
             return (T) Deserialize(data, typeof(T));
@@ -79,6 +74,8 @@ namespace ProtobufDeserializer.V2
                     if (prop.PropertyType.IsArray)
                     {
                         var list = ReadField(prop.Name, input);
+                        if (list == null) continue;
+
                         var toArray = list.GetType().GetMethod("ToArray");
                         prop.SetValue(targetInstance, toArray?.Invoke(list, null));
                         continue;
@@ -92,37 +89,6 @@ namespace ProtobufDeserializer.V2
                     ReadFields(input, instance, prop.PropertyType);
                     prop.SetValue(targetInstance, instance);
                 }
-
-
-                //if (prop.PropertyType.IsClass
-                //    && !prop.PropertyType.IsPrimitive)
-                //{
-                //    //Lists and collections
-                //    if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null
-                //        && !prop.PropertyType.IsArray)
-                //    {
-                //        var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
-                //        prop.SetValue(instance, propValue);
-                //        continue;
-                //    }
-
-                //    if (prop.PropertyType.IsArray)
-                //    {
-                //        var list = GetPropertyValueFromMap(prop.Name, fieldMap);
-                //        var toArray = list.GetType().GetMethod("ToArray");
-                //        prop.SetValue(instance, toArray?.Invoke(list, null));
-                //        continue;
-                //    }
-
-                //    var messageField =
-                //    var classObject = ConstructObject(fieldMap, prop.PropertyType);
-                //    prop.SetValue(instance, classObject);
-                //}
-                //else
-                //{
-                //    var propValue = ReadField(prop.Name, input);
-                //    prop.SetValue(targetInstance, propValue);
-                //}
             }
         }
 
@@ -140,64 +106,12 @@ namespace ProtobufDeserializer.V2
         {
             if (messageSchema.TryGetValue(fieldName, out var field)) return field?.ReadValue(input);
 
+            // Do we care about these other scenarios
             var lowerCasedFieldExists = messageSchema.TryGetValue(fieldName.ToLower(), out field);
             if (lowerCasedFieldExists) return field?.ReadValue(input);
 
             var upperCasedFieldExists = messageSchema.TryGetValue(fieldName.ToUpper(), out field);
             return !upperCasedFieldExists ? null : field?.ReadValue(input);
-        }
-
-        private object ConstructObject(IReadOnlyDictionary<string, object> fieldMap, Type type)
-        {
-            var instance = Activator.CreateInstance(type);
-
-            var props = type.GetProperties();
-            foreach (var prop in props)
-            {
-                if (prop.PropertyType.IsClass 
-                    && !prop.PropertyType.IsPrimitive)
-                {
-                    // Lists and collections
-                    if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null 
-                        && !prop.PropertyType.IsArray)
-                    {
-                        var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
-                        prop.SetValue(instance, propValue);
-                        continue;
-                    }
-
-                    if (prop.PropertyType.IsArray)
-                    {
-                        var list = GetPropertyValueFromMap(prop.Name, fieldMap);
-                        var toArray = list.GetType().GetMethod("ToArray");
-                        prop.SetValue(instance, toArray?.Invoke(list, null));
-                        continue;
-                    }
-
-                    var classObject = ConstructObject(fieldMap, prop.PropertyType);
-                    prop.SetValue(instance, classObject);
-                }
-                else
-                {
-                    var propValue = GetPropertyValueFromMap(prop.Name, fieldMap);
-                    prop.SetValue(instance, propValue);
-                }
-            }
-
-            return instance;
-        }
-
-        private static object GetPropertyValueFromMap(string propertyName, IReadOnlyDictionary<string, object> fieldMap)
-        {
-            var fieldExists = fieldMap.TryGetValue(propertyName, out var propValue);
-            if (fieldExists) return propValue;
-
-            // Do we care about these other scenarios?
-            var lowerCasedFieldExists = fieldMap.TryGetValue(propertyName.ToLower(), out propValue);
-            if (lowerCasedFieldExists) return propValue;
-
-            var upperCasedFieldExists = fieldMap.TryGetValue(propertyName.ToUpper(), out propValue);
-            return upperCasedFieldExists ? propValue : null;
         }
 
         private Dictionary<string, IField> GetMessageSchema()

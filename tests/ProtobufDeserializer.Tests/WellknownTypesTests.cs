@@ -2,7 +2,6 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Dtos;
-using ProtobufDeserializer.V2;
 
 namespace ProtobufDeserializer.Tests
 {

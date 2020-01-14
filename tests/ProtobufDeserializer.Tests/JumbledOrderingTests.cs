@@ -1,7 +1,6 @@
 ﻿using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Helpers;
-using ProtobufDeserializer.V2;
 using System;
 using System.Linq;
 using ProtobufDeserializer.Tests.Dtos;
@@ -158,7 +157,7 @@ namespace ProtobufDeserializer.Tests
         }
 
         [TestMethod]
-        public void JumbledMessageParsingTest()
+        public void JumbledMessageWithDuplicateFieldNameParsingTest()
         {
             // Arrange
             var jumbledMessage = new Cats

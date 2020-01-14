@@ -1,5 +1,4 @@
-﻿using ProtobufDeserializer.V2;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace ProtobufDeserializer.Example

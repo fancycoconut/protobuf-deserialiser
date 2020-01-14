@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.V2
+namespace ProtobufDeserializer
 {
     public interface IField
     {

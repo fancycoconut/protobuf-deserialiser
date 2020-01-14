@@ -1,12 +1,11 @@
-﻿using System;
-using Google.Protobuf;
+﻿using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.V2.Types
+namespace ProtobufDeserializer.Types
 {
-    public class BytesField : Field
+    public class FloatField : Field
     {
-        public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Bytes);
+        public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Float);
 
         public override object ReadValue(CodedInputStream input)
         {
@@ -14,15 +13,14 @@ namespace ProtobufDeserializer.V2.Types
 
             if (Label == FieldDescriptorProto.Types.Label.Repeated)
             {
-                throw new NotImplementedException();
                 // TODO Figure out if it is packed or unpacked
-                //Value = base.ReadPackedRepeated(input.ReadBytes);
+                return base.ReadPackedRepeated(input, input.ReadFloat);
             }
 
             var tag = input.ReadTag();
             if (tag == 0 || input.IsAtEnd) return null;
 
-            return input.ReadBytes().ToByteArray();
+            return input.ReadFloat();
         }
     }
 }

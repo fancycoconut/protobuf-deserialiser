@@ -1,7 +1,7 @@
 ﻿using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.V2.Types
+namespace ProtobufDeserializer.Types
 {
     public class Int32Field : Field
     {

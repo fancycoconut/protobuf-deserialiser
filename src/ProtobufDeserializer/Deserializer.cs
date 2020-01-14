@@ -2,11 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Reflection.Emit;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.V2
+namespace ProtobufDeserializer
 {
     public class Deserializer
     {
@@ -24,18 +23,14 @@ namespace ProtobufDeserializer.V2
 
         public IEnumerable<Type> GetMessageTypes()
         {
-            AssemblyBuilder dynamicAssembly 
-
-
-            //var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("MyDynamicAssembly"), AssemblyBuilderAccess.Run);
-            //var dynamicModule = dynamicAssembly.DefineDynamicModule("MyDynamicAssemblyModule");
-
             var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
             var descriptor = fileDescriptorSet.File[0];
 
             var types = new List<Type>();
             foreach (var message in descriptor.MessageType)
             {
+                //var typeBuilder = new MessageTypeFactory(message);
+
                 foreach (var nestedMessage in message.NestedType)
                 {
 
@@ -90,23 +85,20 @@ namespace ProtobufDeserializer.V2
                 }
                 else
                 {
-                    // Lists and collections
-                    if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null
-                        && !prop.PropertyType.IsArray)
-                    {
-                        var propValue = ReadField(prop.Name, input);
-                        prop.SetValue(targetInstance, propValue);
-                        continue;
-                    }
-
-                    // Arrays
-                    if (prop.PropertyType.IsArray)
+                    // Lists and arrays
+                    if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
                     {
                         var list = ReadField(prop.Name, input);
-                        if (list == null) continue;
+                        if (prop.PropertyType.IsArray && list != null)
+                        {
+                            var toArray = list.GetType().GetMethod("ToArray");
+                            prop.SetValue(targetInstance, toArray?.Invoke(list, null));
+                        }
+                        else
+                        {
+                            prop.SetValue(targetInstance, list);
+                        }
 
-                        var toArray = list.GetType().GetMethod("ToArray");
-                        prop.SetValue(targetInstance, toArray?.Invoke(list, null));
                         continue;
                     }
 
@@ -148,30 +140,30 @@ namespace ProtobufDeserializer.V2
             var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
             var descriptor = fileDescriptorSet.File[0];
 
-            return ParseMessages(descriptor.MessageType);
+            return ParseMessage(descriptor.MessageType);
         }
 
-        private static Dictionary<string, IField> ParseMessages(IEnumerable<DescriptorProto> messages)
+        private static Dictionary<string, IField> ParseMessage(IEnumerable<DescriptorProto> messages)
         {
-            // Parse the main message first because we want all the fields to be in order before we start reading the data
-            var messageSchema = new Dictionary<string, IField>();
+            var schema = new Dictionary<string, IField>();
+
             foreach (var message in messages)
             {
                 foreach (var field in message.Field)
                 {
-                    messageSchema.Add(field.Name, FieldFactory.Create(message.Name, field));
+                    schema.Add(field.Name, FieldFactory.Create(message.Name, field));
                 }
 
                 foreach (var nestedMessage in message.NestedType)
                 {
                     foreach (var field in nestedMessage.Field)
                     {
-                        messageSchema.Add(field.Name, FieldFactory.Create(nestedMessage.Name, field));
+                        schema.Add(field.Name, FieldFactory.Create(nestedMessage.Name, field));
                     }
                 }
             }
 
-            return messageSchema;
+            return schema;
         }
     }
 }

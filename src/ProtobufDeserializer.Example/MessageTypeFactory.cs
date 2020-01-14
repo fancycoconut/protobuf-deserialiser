@@ -1,10 +1,15 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.DynamicTypes
+namespace ProtobufDeserializer.Example
 {
+    /// <summary>
+    /// This doesn't work in net standard because net standard does not support dynamic assembly
+    /// https://benohead.com/blog/2013/12/26/create-anonymous-types-at-runtime-in-c-sharp/
+    /// </summary>
     public class MessageTypeFactory
     {
         private Type concreteType;
@@ -21,14 +26,16 @@ namespace ProtobufDeserializer.DynamicTypes
         {
             var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("StronglyTypedMessage"), AssemblyBuilderAccess.RunAndCollect);
             var dynamicModule = dynamicAssembly.DefineDynamicModule("StronglyTypedMessageModule");
-            var typeBuilder = dynamicModule.DefineType(message.Name, TypeAttributes.Public);
+            var typeBuilder = dynamicModule.DefineType($"ProtoNinja.Generated.{message.Name}", TypeAttributes.Public);
 
-            //foreach (var field in message.Field)
-            //{
-                AddProperty(typeBuilder, "Test1", typeof(string));
-                AddProperty(typeBuilder, "Test2", typeof(string));
-                AddProperty(typeBuilder, "Test3", typeof(string));
-            //}
+            var fields = message.Field.OrderBy(x => x.Number);
+            foreach (var field in fields)
+            {
+                AddProperty(typeBuilder, field.Name, GetFieldType(field.Type));
+            }
+
+            // Attach a ToString method to every type
+            //typeBuilder.DefineMethod()
 
             concreteType = typeBuilder.CreateType();
         }
@@ -62,6 +69,30 @@ namespace ProtobufDeserializer.DynamicTypes
         public Type GetConcreteType()
         {
             return concreteType;
+        }
+
+        private static Type GetFieldType(FieldDescriptorProto.Types.Type type)
+        {
+            switch (type)
+            {
+                case FieldDescriptorProto.Types.Type.Float:
+                    return typeof(float);
+                case FieldDescriptorProto.Types.Type.Int32:
+                    return typeof(int);
+                case FieldDescriptorProto.Types.Type.Bool:
+                    return typeof(bool);
+                case FieldDescriptorProto.Types.Type.String:
+                    return typeof(string);
+                case FieldDescriptorProto.Types.Type.Message:
+                    // Might need recursion for this...
+                    return typeof(object);
+                case FieldDescriptorProto.Types.Type.Uint32:
+                    return typeof(uint);
+                case FieldDescriptorProto.Types.Type.Enum:
+                    return typeof(Enum);
+                default:
+                    return typeof(object);
+            }
         }
     }
 }

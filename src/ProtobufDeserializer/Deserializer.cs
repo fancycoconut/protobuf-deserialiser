@@ -21,30 +21,6 @@ namespace ProtobufDeserializer
             propertiesCache = new Dictionary<Type, PropertyInfo[]>();
         }
 
-        public IEnumerable<Type> GetMessageTypes()
-        {
-            var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
-            var descriptor = fileDescriptorSet.File[0];
-
-            var types = new List<Type>();
-            foreach (var message in descriptor.MessageType)
-            {
-                //var typeBuilder = new MessageTypeFactory(message);
-
-                foreach (var nestedMessage in message.NestedType)
-                {
-
-                }
-            }
-
-            return types;
-        }
-
-        //private Type GetAnonymousType()
-        //{
-
-        //}
-
         public T Deserialize<T>(byte[] data)
         {
             return (T) Deserialize(data, typeof(T));

@@ -24,7 +24,7 @@ namespace ProtobufDeserializer.Example
 
         private void CreateConcreteType()
         {
-            var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("StronglyTypedMessage"), AssemblyBuilderAccess.RunAndCollect);
+            var dynamicAssembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName("ProtoNinja.Generated"), AssemblyBuilderAccess.RunAndCollect);
             var dynamicModule = dynamicAssembly.DefineDynamicModule("StronglyTypedMessageModule");
             var typeBuilder = dynamicModule.DefineType($"ProtoNinja.Generated.{message.Name}", TypeAttributes.Public);
 
@@ -73,6 +73,8 @@ namespace ProtobufDeserializer.Example
 
         private static Type GetFieldType(FieldDescriptorProto.Types.Type type)
         {
+            // Under types
+            // https://developers.google.com/protocol-buffers/docs/proto3
             switch (type)
             {
                 case FieldDescriptorProto.Types.Type.Float:

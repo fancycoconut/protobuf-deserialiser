@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+message Dup {
+	int32 Field1 = 1;
+	int32 Field2 = 2;
+	int32 Field3 = 3;
+}
+
+message Duper {
+	string Field1 = 1;
+	Dup Pet = 2;
+}

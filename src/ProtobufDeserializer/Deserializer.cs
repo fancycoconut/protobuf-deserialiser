@@ -133,6 +133,7 @@ namespace ProtobufDeserializer
             {
                 foreach (var field in message.Field)
                 {
+                    //AddItemToDictionary($"{ComputeFieldTag(field)}_{GetNativeType(field.Type)}", FieldFactory.Create(message.Name, field), schema);
                     AddItemToDictionary($"{ComputeFieldTag(field)}_{field.Name}", FieldFactory.Create(message.Name, field), schema);
                 }
 
@@ -140,6 +141,7 @@ namespace ProtobufDeserializer
                 {
                     foreach (var field in nestedMessage.Field)
                     {
+                        //AddItemToDictionary($"{ComputeFieldTag(field)}_{GetNativeType(field.Type)}", FieldFactory.Create(nestedMessage.Name, field), schema);
                         AddItemToDictionary($"{ComputeFieldTag(field)}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field), schema);
                     }
                 }
@@ -150,10 +152,8 @@ namespace ProtobufDeserializer
 
         private static void AddItemToDictionary<TKey, TValue>(TKey key, TValue item, IDictionary<TKey, TValue> dictionary)
         {
-            if (!dictionary.ContainsKey(key))
-            {
-                dictionary.Add(key, item);
-            }
+            if (dictionary.ContainsKey(key)) return;
+            dictionary.Add(key, item);
         }
 
         private static int ComputeFieldTag(FieldDescriptorProto field)
@@ -240,13 +240,13 @@ namespace ProtobufDeserializer
                 case FieldDescriptorProto.Types.Type.Message:
                     return typeof(object);
                 case FieldDescriptorProto.Types.Type.Sfixed32:
-                    //return typeof()
+                    return typeof(int);
                 case FieldDescriptorProto.Types.Type.Fixed32:
+                    return typeof(uint);
                 case FieldDescriptorProto.Types.Type.Float:
-                    //return 5;
-
+                    return typeof(float);
                 default:
-                    throw new Exception(); //ArgumentOutOfRangeException(nameof(field.Type), field.Type, null);
+                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
             }
         }
 

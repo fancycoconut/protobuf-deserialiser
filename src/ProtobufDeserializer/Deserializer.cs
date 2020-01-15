@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
+using ProtobufDeserializer.Helpers;
 
 namespace ProtobufDeserializer
 {
@@ -22,7 +23,7 @@ namespace ProtobufDeserializer
         }
 
         /// <summary>
-        /// Deserialises a given stream of protobuf based on the provided descriptor
+        /// Deserializes a given stream of protobuf based on the provided descriptor
         /// This can be a potentially expensive process especially for nested messages
         /// </summary>
         /// <returns></returns>
@@ -32,7 +33,7 @@ namespace ProtobufDeserializer
         }
 
         /// <summary>
-        /// Deserialises a given stream of protobuf based on the provided descriptor and message name
+        /// Deserializes a given stream of protobuf based on the provided descriptor and message name
         /// </summary>
         /// <param name="data"></param>
         /// <param name="messageName"></param>
@@ -42,13 +43,19 @@ namespace ProtobufDeserializer
             throw new NotImplementedException();
         }
 
+        /// <summary>
+        /// Deserializes a given stream of protobuf based on the provided descriptor into a concrete typed object
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
         public T Deserialize<T>(byte[] data)
         {
             return (T) Deserialize(data, typeof(T));
         }
 
         /// <summary>
-        ///
+        /// Deserializes a given stream of protobuf based on the provided descriptor into a concrete typed object
         /// </summary>
         /// <param name="data"></param>
         /// <param name="type"></param>
@@ -164,14 +171,16 @@ namespace ProtobufDeserializer
             {
                 foreach (var field in message.Field)
                 {
-                    AddItemToDictionary($"{ComputeFieldTag(field)}_{field.Name}", FieldFactory.Create(message.Name, field), schema);
+                    var tag = ProtobufHelper.ComputeFieldTag(field);
+                    AddItemToDictionary($"{tag}_{field.Name}", FieldFactory.Create(message.Name, field), schema);
                 }
 
                 foreach (var nestedMessage in message.NestedType)
                 {
                     foreach (var field in nestedMessage.Field)
                     {
-                        AddItemToDictionary($"{ComputeFieldTag(field)}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field), schema);
+                        var tag = ProtobufHelper.ComputeFieldTag(field);
+                        AddItemToDictionary($"{tag}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field), schema);
                     }
                 }
             }
@@ -183,55 +192,6 @@ namespace ProtobufDeserializer
         {
             if (dictionary.ContainsKey(key)) return;
             dictionary.Add(key, item);
-        }
-
-        private static int ComputeFieldTag(FieldDescriptorProto field)
-        {
-            // (field_number << 3) | wire_type
-            return (field.Number << 3) | GetWireType(field);
-        }
-
-        // TODO Refactor/change this....
-        private static int GetWireType(FieldDescriptorProto field)
-        {
-            // Wire Types
-            // 0    Varint                  int32, int64, uint32, uint64, sint32, sint64, bool, enum
-            // 1    64-bit                  fixed64, sfixed64, double
-            // 2	Length-delimited        string, bytes, embedded messages, packed repeated fields
-            // 3	Start                   group groups (deprecated)
-            // 4	End group               groups (deprecated)
-            // 5	32-bit                  fixed32, sfixed32, float
-
-            switch (field.Type)
-            {
-                case FieldDescriptorProto.Types.Type.Int32:
-                case FieldDescriptorProto.Types.Type.Int64:
-                case FieldDescriptorProto.Types.Type.Uint32:
-                case FieldDescriptorProto.Types.Type.Uint64:
-                case FieldDescriptorProto.Types.Type.Sint32:
-                case FieldDescriptorProto.Types.Type.Sint64:
-                case FieldDescriptorProto.Types.Type.Bool:
-                case FieldDescriptorProto.Types.Type.Enum:
-                    return field.Label == FieldDescriptorProto.Types.Label.Repeated ? 2 : 0;
-
-                case FieldDescriptorProto.Types.Type.Fixed64:
-                case FieldDescriptorProto.Types.Type.Sfixed64:
-                case FieldDescriptorProto.Types.Type.Double:
-                    return 1;
-
-                case FieldDescriptorProto.Types.Type.String:
-                case FieldDescriptorProto.Types.Type.Bytes:
-                case FieldDescriptorProto.Types.Type.Message:
-                    return 2;
-
-                case FieldDescriptorProto.Types.Type.Sfixed32:
-                case FieldDescriptorProto.Types.Type.Fixed32:
-                case FieldDescriptorProto.Types.Type.Float:
-                    return 5;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(field.Type), field.Type, null);
-            }
         }
     }
 }

@@ -1,0 +1,12 @@
+﻿syntax = "proto3";
+
+message Tiger {
+	int32 Field1 = 1;
+	int32 Field2 = 2;
+	int32 Field3 = 3;
+}
+
+message Cats {
+	int32 Field1 = 1;
+	Tiger Pet = 2;
+}

@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Protobuf.Tools" Version="3.11.2" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.4.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.4.0" />
@@ -15,5 +16,13 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\ProtobufDeserializer\ProtobufDeserializer.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="ProtoClasses\" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="set PROTOC_PATH=&quot;C:\Users\wongka\.nuget\packages\google.protobuf.tools\3.11.2\tools\windows_x64&quot;&#xD;&#xA;&#xD;&#xA;echo Re-generate c sharp classes for all proto files&#xD;&#xA;%PROTOC_PATH%\protoc.exe -I=$(ProjectDir)\ProtoFiles --csharp_out=$(ProjectDir)\ProtoClasses $(ProjectDir)\ProtoFiles\*.proto" />
+  </Target>
 
 </Project>

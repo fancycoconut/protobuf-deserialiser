@@ -1,0 +1,13 @@
+﻿syntax = "proto3";
+
+message JumbledFooInside {
+	int32 Id = 1;
+	string FirstName = 4;
+	string Surname = 2;
+	message JumbledBarInside {
+		string Star = 2;
+		string Fighter = 1;
+	}
+    
+	JumbledBarInside NestedMessage = 3;
+}

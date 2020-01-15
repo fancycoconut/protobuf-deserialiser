@@ -48,15 +48,29 @@ namespace ProtobufDeserializer
         private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
         {
             var props = GetProperties(targetInstanceType);
-            foreach (var prop in props)
+            var propsQueue = new Queue<PropertyInfo>(props);
+            while (propsQueue.Count > 0)
             {
+                var prop = propsQueue.Dequeue();
+                var tag = Convert.ToInt32(input.PeekTag());
+                if (tag == 0) break;
+
+                // TODO fix for lower and upper case names...
+                var key = $"{tag}_{prop.Name}";
+                if (!messageSchema.TryGetValue(key, out var field))
+                {
+                    propsQueue.Enqueue(prop);
+                    continue;
+                }
+
+
                 if (prop.PropertyType.IsPrimitive
                     || prop.PropertyType.IsEnum
                     || prop.PropertyType == typeof(string)
                     // TODO Test for decimal since float currently works
                     || prop.PropertyType == typeof(decimal))
                 {
-                    var propValue = ReadField(prop.Name, input);
+                    var propValue = field?.ReadValue(input);
                     prop.SetValue(targetInstance, propValue);
                 }
                 else
@@ -64,7 +78,7 @@ namespace ProtobufDeserializer
                     // Lists and arrays
                     if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
                     {
-                        var list = ReadField(prop.Name, input);
+                        var list = field?.ReadValue(input);
                         if (prop.PropertyType.IsArray && list != null)
                         {
                             var toArray = list.GetType().GetMethod("ToArray");
@@ -80,13 +94,14 @@ namespace ProtobufDeserializer
 
                     // Nested Messages
                     // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
-                    ReadField(prop.Name, input);
+                    field?.ReadValue(input);
 
                     var instance = Activator.CreateInstance(prop.PropertyType);
                     ReadFields(input, instance, prop.PropertyType);
                     prop.SetValue(targetInstance, instance);
                 }
             }
+
         }
 
         private IEnumerable<PropertyInfo> GetProperties(Type type)
@@ -113,6 +128,7 @@ namespace ProtobufDeserializer
 
             key = $"{tag}_{fieldName.ToUpper()}";
             var upperCasedFieldExists = messageSchema.TryGetValue(key, out field);
+            if (upperCasedFieldExists) return field?.ReadValue(input);
             return !upperCasedFieldExists ? null : field?.ReadValue(input);
         }
 
@@ -133,7 +149,6 @@ namespace ProtobufDeserializer
             {
                 foreach (var field in message.Field)
                 {
-                    //AddItemToDictionary($"{ComputeFieldTag(field)}_{GetNativeType(field.Type)}", FieldFactory.Create(message.Name, field), schema);
                     AddItemToDictionary($"{ComputeFieldTag(field)}_{field.Name}", FieldFactory.Create(message.Name, field), schema);
                 }
 
@@ -141,7 +156,6 @@ namespace ProtobufDeserializer
                 {
                     foreach (var field in nestedMessage.Field)
                     {
-                        //AddItemToDictionary($"{ComputeFieldTag(field)}_{GetNativeType(field.Type)}", FieldFactory.Create(nestedMessage.Name, field), schema);
                         AddItemToDictionary($"{ComputeFieldTag(field)}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field), schema);
                     }
                 }
@@ -206,49 +220,49 @@ namespace ProtobufDeserializer
         }
 
         // TODO Refactor this
-        private static Type GetNativeType(FieldDescriptorProto.Types.Type type)
-        {
-            // Needs refactoring, these types map to the output types of the ReadValue method
-            switch (type)
-            {
-                case FieldDescriptorProto.Types.Type.Int32:
-                    return typeof(int);
-                case FieldDescriptorProto.Types.Type.Int64:
-                    return typeof(long);
-                case FieldDescriptorProto.Types.Type.Uint32:
-                    return typeof(uint);
-                case FieldDescriptorProto.Types.Type.Uint64:
-                    return typeof(ulong);
-                case FieldDescriptorProto.Types.Type.Sint32:
-                    return typeof(int);
-                case FieldDescriptorProto.Types.Type.Sint64:
-                    return typeof(long);
-                case FieldDescriptorProto.Types.Type.Bool:
-                    return typeof(bool);
-                case FieldDescriptorProto.Types.Type.Enum:
-                    return typeof(int);
-                case FieldDescriptorProto.Types.Type.Fixed64:
-                    return typeof(ulong);
-                case FieldDescriptorProto.Types.Type.Sfixed64:
-                    return typeof(long);
-                case FieldDescriptorProto.Types.Type.Double:
-                    return typeof(double);
-                case FieldDescriptorProto.Types.Type.String:
-                    return typeof(string);
-                case FieldDescriptorProto.Types.Type.Bytes:
-                    return typeof(byte[]);
-                case FieldDescriptorProto.Types.Type.Message:
-                    return typeof(object);
-                case FieldDescriptorProto.Types.Type.Sfixed32:
-                    return typeof(int);
-                case FieldDescriptorProto.Types.Type.Fixed32:
-                    return typeof(uint);
-                case FieldDescriptorProto.Types.Type.Float:
-                    return typeof(float);
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
-            }
-        }
+        //private static Type GetNativeType(FieldDescriptorProto.Types.Type type)
+        //{
+        //    // Needs refactoring, these types map to the output types of the ReadValue method
+        //    switch (type)
+        //    {
+        //        case FieldDescriptorProto.Types.Type.Int32:
+        //            return typeof(int);
+        //        case FieldDescriptorProto.Types.Type.Int64:
+        //            return typeof(long);
+        //        case FieldDescriptorProto.Types.Type.Uint32:
+        //            return typeof(uint);
+        //        case FieldDescriptorProto.Types.Type.Uint64:
+        //            return typeof(ulong);
+        //        case FieldDescriptorProto.Types.Type.Sint32:
+        //            return typeof(int);
+        //        case FieldDescriptorProto.Types.Type.Sint64:
+        //            return typeof(long);
+        //        case FieldDescriptorProto.Types.Type.Bool:
+        //            return typeof(bool);
+        //        case FieldDescriptorProto.Types.Type.Enum:
+        //            return typeof(int);
+        //        case FieldDescriptorProto.Types.Type.Fixed64:
+        //            return typeof(ulong);
+        //        case FieldDescriptorProto.Types.Type.Sfixed64:
+        //            return typeof(long);
+        //        case FieldDescriptorProto.Types.Type.Double:
+        //            return typeof(double);
+        //        case FieldDescriptorProto.Types.Type.String:
+        //            return typeof(string);
+        //        case FieldDescriptorProto.Types.Type.Bytes:
+        //            return typeof(byte[]);
+        //        case FieldDescriptorProto.Types.Type.Message:
+        //            return typeof(object);
+        //        case FieldDescriptorProto.Types.Type.Sfixed32:
+        //            return typeof(int);
+        //        case FieldDescriptorProto.Types.Type.Fixed32:
+        //            return typeof(uint);
+        //        case FieldDescriptorProto.Types.Type.Float:
+        //            return typeof(float);
+        //        default:
+        //            throw new ArgumentOutOfRangeException(nameof(type), type, null);
+        //    }
+        //}
 
     }
 }

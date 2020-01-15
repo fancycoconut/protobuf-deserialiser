@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
+using ProtobufDeserializer.Legacy.V1;
 
-namespace ProtobufDeserializer.Legacy.V1
+namespace ProtobufDeserializer.Legacy
 {
     [Obsolete("This implementation is deprecated")]
     public class Deserializer

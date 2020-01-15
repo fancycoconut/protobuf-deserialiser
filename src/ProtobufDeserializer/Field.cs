@@ -37,6 +37,8 @@ namespace ProtobufDeserializer
 
         protected bool CurrentFieldNumberIsCorrect(CodedInputStream input)
         {
+            return true;
+
             var tag = input.PeekTag();
 
             // (field_number << 3) | wire_type

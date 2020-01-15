@@ -37,7 +37,7 @@ namespace ProtobufDeserializer
 
         protected bool CurrentFieldNumberIsCorrect(CodedInputStream input)
         {
-            return true;
+            //return true;
 
             var tag = input.PeekTag();
 

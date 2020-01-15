@@ -124,31 +124,6 @@ namespace ProtobufDeserializer
             return ParseMessage(descriptor.MessageType);
         }
 
-        
-        //private static Dictionary<string, IField> ParseMessage(IEnumerable<DescriptorProto> messages)
-        //{
-        //    var schema = new Dictionary<string, IField>();
-
-        //    foreach (var message in messages)
-        //    {
-        //        foreach (var field in message.Field)
-        //        {
-        //            schema.Add(field.Name, FieldFactory.Create(message.Name, field));
-        //        }
-
-        //        foreach (var nestedMessage in message.NestedType)
-        //        {
-        //            foreach (var field in nestedMessage.Field)
-        //            {
-        //                schema.Add(field.Name, FieldFactory.Create(nestedMessage.Name, field));
-        //            }
-        //        }
-        //    }
-
-        //    return schema;
-        //}
-
-
         // Breakthrough!! Soo I think because there is a consistent way of generating a tag therefore this handles duplicated fields as well :)
         private static Dictionary<string, IField> ParseMessage(IEnumerable<DescriptorProto> messages)
         {
@@ -229,5 +204,51 @@ namespace ProtobufDeserializer
                     throw new ArgumentOutOfRangeException(nameof(field.Type), field.Type, null);
             }
         }
+
+        // TODO Refactor this
+        private static Type GetNativeType(FieldDescriptorProto.Types.Type type)
+        {
+            // Needs refactoring, these types map to the output types of the ReadValue method
+            switch (type)
+            {
+                case FieldDescriptorProto.Types.Type.Int32:
+                    return typeof(int);
+                case FieldDescriptorProto.Types.Type.Int64:
+                    return typeof(long);
+                case FieldDescriptorProto.Types.Type.Uint32:
+                    return typeof(uint);
+                case FieldDescriptorProto.Types.Type.Uint64:
+                    return typeof(ulong);
+                case FieldDescriptorProto.Types.Type.Sint32:
+                    return typeof(int);
+                case FieldDescriptorProto.Types.Type.Sint64:
+                    return typeof(long);
+                case FieldDescriptorProto.Types.Type.Bool:
+                    return typeof(bool);
+                case FieldDescriptorProto.Types.Type.Enum:
+                    return typeof(int);
+                case FieldDescriptorProto.Types.Type.Fixed64:
+                    return typeof(ulong);
+                case FieldDescriptorProto.Types.Type.Sfixed64:
+                    return typeof(long);
+                case FieldDescriptorProto.Types.Type.Double:
+                    return typeof(double);
+                case FieldDescriptorProto.Types.Type.String:
+                    return typeof(string);
+                case FieldDescriptorProto.Types.Type.Bytes:
+                    return typeof(byte[]);
+                case FieldDescriptorProto.Types.Type.Message:
+                    return typeof(object);
+                case FieldDescriptorProto.Types.Type.Sfixed32:
+                    //return typeof()
+                case FieldDescriptorProto.Types.Type.Fixed32:
+                case FieldDescriptorProto.Types.Type.Float:
+                    //return 5;
+
+                default:
+                    throw new Exception(); //ArgumentOutOfRangeException(nameof(field.Type), field.Type, null);
+            }
+        }
+
     }
 }

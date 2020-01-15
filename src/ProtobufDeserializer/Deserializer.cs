@@ -52,12 +52,11 @@ namespace ProtobufDeserializer
             while (propsQueue.Count > 0)
             {
                 var prop = propsQueue.Dequeue();
-                var tag = Convert.ToInt32(input.PeekTag());
+                var tag = input.PeekTag();
                 if (tag == 0) break;
 
-                // TODO fix for lower and upper case names...
-                var key = $"{tag}_{prop.Name}";
-                if (!messageSchema.TryGetValue(key, out var field))
+                var field = GetFieldReader(tag, prop.Name);
+                if (field == null)
                 {
                     propsQueue.Enqueue(prop);
                     continue;
@@ -114,22 +113,19 @@ namespace ProtobufDeserializer
             return props;
         }
 
-        private object ReadField(string fieldName, CodedInputStream input)
+        private IField GetFieldReader(uint tag, string fieldName)
         {
-            var tag = Convert.ToInt32(input.PeekTag());
-
             var key = $"{tag}_{fieldName}";
-            if (messageSchema.TryGetValue(key, out var field)) return field?.ReadValue(input);
+            if (messageSchema.TryGetValue(key, out var field)) return field;
 
             // Do we care about these other scenarios
             key = $"{tag}_{fieldName.ToLower()}";
             var lowerCasedFieldExists = messageSchema.TryGetValue(key, out field);
-            if (lowerCasedFieldExists) return field?.ReadValue(input);
+            if (lowerCasedFieldExists) return field;
 
             key = $"{tag}_{fieldName.ToUpper()}";
             var upperCasedFieldExists = messageSchema.TryGetValue(key, out field);
-            if (upperCasedFieldExists) return field?.ReadValue(input);
-            return !upperCasedFieldExists ? null : field?.ReadValue(input);
+            return !upperCasedFieldExists ? null : field;
         }
 
         private Dictionary<string, IField> GetMessageSchema()
@@ -218,51 +214,5 @@ namespace ProtobufDeserializer
                     throw new ArgumentOutOfRangeException(nameof(field.Type), field.Type, null);
             }
         }
-
-        // TODO Refactor this
-        //private static Type GetNativeType(FieldDescriptorProto.Types.Type type)
-        //{
-        //    // Needs refactoring, these types map to the output types of the ReadValue method
-        //    switch (type)
-        //    {
-        //        case FieldDescriptorProto.Types.Type.Int32:
-        //            return typeof(int);
-        //        case FieldDescriptorProto.Types.Type.Int64:
-        //            return typeof(long);
-        //        case FieldDescriptorProto.Types.Type.Uint32:
-        //            return typeof(uint);
-        //        case FieldDescriptorProto.Types.Type.Uint64:
-        //            return typeof(ulong);
-        //        case FieldDescriptorProto.Types.Type.Sint32:
-        //            return typeof(int);
-        //        case FieldDescriptorProto.Types.Type.Sint64:
-        //            return typeof(long);
-        //        case FieldDescriptorProto.Types.Type.Bool:
-        //            return typeof(bool);
-        //        case FieldDescriptorProto.Types.Type.Enum:
-        //            return typeof(int);
-        //        case FieldDescriptorProto.Types.Type.Fixed64:
-        //            return typeof(ulong);
-        //        case FieldDescriptorProto.Types.Type.Sfixed64:
-        //            return typeof(long);
-        //        case FieldDescriptorProto.Types.Type.Double:
-        //            return typeof(double);
-        //        case FieldDescriptorProto.Types.Type.String:
-        //            return typeof(string);
-        //        case FieldDescriptorProto.Types.Type.Bytes:
-        //            return typeof(byte[]);
-        //        case FieldDescriptorProto.Types.Type.Message:
-        //            return typeof(object);
-        //        case FieldDescriptorProto.Types.Type.Sfixed32:
-        //            return typeof(int);
-        //        case FieldDescriptorProto.Types.Type.Fixed32:
-        //            return typeof(uint);
-        //        case FieldDescriptorProto.Types.Type.Float:
-        //            return typeof(float);
-        //        default:
-        //            throw new ArgumentOutOfRangeException(nameof(type), type, null);
-        //    }
-        //}
-
     }
 }

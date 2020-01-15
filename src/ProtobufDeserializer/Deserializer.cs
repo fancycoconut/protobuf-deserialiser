@@ -11,14 +11,35 @@ namespace ProtobufDeserializer
     {
         private readonly byte[] descriptorData;
         private readonly Dictionary<string, IField> messageSchema;
-        private readonly Dictionary<Type, PropertyInfo[]> propertiesCache;
+        private readonly Dictionary<Type, Queue<PropertyInfo>> propertiesCache;
 
         public Deserializer(byte[] descriptor)
         {
             descriptorData = descriptor;
 
             messageSchema = GetMessageSchema();
-            propertiesCache = new Dictionary<Type, PropertyInfo[]>();
+            propertiesCache = new Dictionary<Type, Queue<PropertyInfo>>();
+        }
+
+        /// <summary>
+        /// Deserialises a given stream of protobuf based on the provided descriptor
+        /// This can be a potentially expensive process especially for nested messages
+        /// </summary>
+        /// <returns></returns>
+        public Dictionary<string, object> DeserializeToMap(byte[] data)
+        {
+            throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Deserialises a given stream of protobuf based on the provided descriptor and message name
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="messageName"></param>
+        /// <returns></returns>
+        public Dictionary<string, object> DeserializeToMap(byte[] data, string messageName)
+        {
+            throw new NotImplementedException();
         }
 
         public T Deserialize<T>(byte[] data)
@@ -27,9 +48,7 @@ namespace ProtobufDeserializer
         }
 
         /// <summary>
-        /// For deserialising protobuf you would actually need to know the order of your message and fields because they can always be jumbled up.
-        /// Therefore I would work with the assumption that I would deserialise a protobuf message based on the actual provided structure of the provided object
-        /// If the field ordering of the provided object is wrong then hard luck because it is close to impossible to know...
+        ///
         /// </summary>
         /// <param name="data"></param>
         /// <param name="type"></param>
@@ -47,8 +66,7 @@ namespace ProtobufDeserializer
 
         private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
         {
-            var props = GetProperties(targetInstanceType);
-            var propsQueue = new Queue<PropertyInfo>(props);
+            var propsQueue = GetProperties(targetInstanceType);
             while (propsQueue.Count > 0)
             {
                 var prop = propsQueue.Dequeue();
@@ -103,11 +121,12 @@ namespace ProtobufDeserializer
 
         }
 
-        private IEnumerable<PropertyInfo> GetProperties(Type type)
+        private Queue<PropertyInfo> GetProperties(Type type)
         {
             if (propertiesCache.TryGetValue(type, out var props)) return props;
 
-            props = type.GetProperties();
+            // We cache the queue to avoid generating it everytime... Which makes it blazingly fast...
+            props = new Queue<PropertyInfo>(type.GetProperties());
             propertiesCache.Add(type, props);
 
             return props;

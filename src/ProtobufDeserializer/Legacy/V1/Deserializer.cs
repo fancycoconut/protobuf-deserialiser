@@ -4,8 +4,9 @@ using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.V1
+namespace ProtobufDeserializer.Legacy.V1
 {
+    [Obsolete("This implementation is deprecated")]
     public class Deserializer
     {
         public static T Deserialize<T>(byte[] descriptorData, byte[] data)

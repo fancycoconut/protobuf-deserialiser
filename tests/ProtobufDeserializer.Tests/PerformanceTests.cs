@@ -4,7 +4,6 @@ using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Dtos;
 using ProtobufDeserializer.Tests.Helpers;
-using ProtobufDeserializer.V2;
 
 namespace ProtobufDeserializer.Tests
 {
@@ -29,9 +28,9 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 1000000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
                 var customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
@@ -59,9 +58,9 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 10000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
                 var customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
@@ -89,9 +88,9 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 10000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
                 var customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
@@ -112,9 +111,9 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 1000000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
                 var foo = deserializer.Deserialize<Dtos.Foo>(data);
             }
             watch.Stop();
@@ -135,9 +134,9 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 100000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
                 var foo = deserializer.Deserialize<Dtos.Foo>(data);
             }
             watch.Stop();
@@ -158,9 +157,9 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 10000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
                 var foo = deserializer.Deserialize<Dtos.Foo>(data);
             }
             watch.Stop();
@@ -189,36 +188,7 @@ namespace ProtobufDeserializer.Tests
             var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 1000000; i++)
             {
-                
                 var person = deserializer.Deserialize<EdwinPerson>(data);
-            }
-            watch.Stop();
-
-            // Report
-            var elapsedMs = watch.ElapsedMilliseconds;
-            System.Diagnostics.Debug.WriteLine($"Elapsed Time: {elapsedMs}");
-        }
-
-        [TestMethod]
-        public void EdwinsMessageToMapPerformanceOneMillion()
-        {
-            // Arrange
-            var expectedPerson = new Person
-            {
-                Id = 10,
-                Name = "Luke Skywalker",
-                Email = "luke.skywalker@jedi.com"
-            };
-
-            var data = expectedPerson.ToByteArray();
-            var descriptor = DescriptorHelper.Read("EdwinsExample.pb");
-
-            // Act
-            var watch = System.Diagnostics.Stopwatch.StartNew();
-            for (var i = 0; i < 1000000; i++)
-            {
-                var deserializer = new Deserializer(descriptor);
-                var map = deserializer.Deserialize(data);
             }
             watch.Stop();
 
@@ -238,9 +208,9 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var watch = System.Diagnostics.Stopwatch.StartNew();
+            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 1000000; i++)
             {
-                var deserializer = new Deserializer(descriptor);
                 var person = deserializer.Deserialize<InfoPascalCase>(data);
             }
             watch.Stop();

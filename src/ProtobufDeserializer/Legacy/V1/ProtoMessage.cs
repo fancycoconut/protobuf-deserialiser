@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
-namespace ProtobufDeserializer.V1
+namespace ProtobufDeserializer.Legacy.V1
 {
+    [Obsolete("This implementation is deprecated")]
     public class ProtoMessage
     {
         public string Name { get; set; }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.V2
+namespace ProtobufDeserializer
 {
     public interface IField
     {
@@ -12,12 +12,11 @@ namespace ProtobufDeserializer.V2
         string TypeName { get; set; }
         FieldDescriptorProto.Types.Label Label { get; set; }
         FieldDescriptorProto.Types.Type Type { get; set; }
-        object Value { get; set; }
 
         string MessageName { get; set; }
         bool IsNestedMessageField { get; set; }
 
-        void ReadValue();
+        object ReadValue(CodedInputStream input);
     }
 
     public abstract class Field : IField
@@ -27,25 +26,16 @@ namespace ProtobufDeserializer.V2
         public string TypeName { get; set; }
         public FieldDescriptorProto.Types.Label Label { get; set; }
         public FieldDescriptorProto.Types.Type Type { get; set; }
-        public object Value { get; set; }
 
         public string MessageName { get; set; }
         public bool IsNestedMessageField { get; set; }
 
-        internal readonly CodedInputStream input;
-
-
-        protected Field(CodedInputStream input)
+        public virtual object ReadValue(CodedInputStream input)
         {
-            this.input = input;
+            throw new NotImplementedException("");
         }
 
-        public virtual void ReadValue()
-        {
-            throw new NotImplementedException();
-        }
-
-        protected bool CurrentFieldNumberIsCorrect()
+        protected bool CurrentFieldNumberIsCorrect(CodedInputStream input)
         {
             var tag = input.PeekTag();
 
@@ -59,15 +49,15 @@ namespace ProtobufDeserializer.V2
             // 0    Varint int32, int64, uint32, uint64, sint32, sint64, bool, enum
             // 1    64-bit fixed64, sfixed64, double
             // 2	Length-delimited string, bytes, embedded messages, packed repeated fields
-            // 3	Start group groups(deprecated)
-            // 4	End group   groups(deprecated)
+            // 3	Start group groups (deprecated)
+            // 4	End group   groups (deprecated)
             // 5	32-bit fixed32, sfixed32, float
 
             var fieldNumber = t >> 3;
             return this.FieldNumber == fieldNumber;
         }
 
-        protected IEnumerable<T> ReadPackedRepeated<T>(Func<T> readInput)
+        protected IEnumerable<T> ReadPackedRepeated<T>(CodedInputStream input, Func<T> readInput)
         {
             var tag = input.ReadTag();
             var length = input.ReadLength();
@@ -81,7 +71,7 @@ namespace ProtobufDeserializer.V2
             return list;
         }
 
-        protected IEnumerable<T> ReadUnpackedRepeated<T>(Func<T> readInput)
+        protected IEnumerable<T> ReadUnpackedRepeated<T>(CodedInputStream input, Func<T> readInput)
         {
             uint tag;
             var list = new List<T>();

@@ -1,7 +1,9 @@
+using System;
 using Google.Protobuf.Reflection;
 
-namespace ProtobufDeserializer.V1
+namespace ProtobufDeserializer.Legacy.V1
 {
+    [Obsolete("This implementation is deprecated")]
     public class FieldInfo
     {
         public string Name { get; set; }

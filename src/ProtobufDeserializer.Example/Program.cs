@@ -1,6 +1,7 @@
-﻿using ProtobufDeserializer.V2;
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using Google.Protobuf.Reflection;
 
 namespace ProtobufDeserializer.Example
 {
@@ -15,11 +16,55 @@ namespace ProtobufDeserializer.Example
             var data = personData.Select(x => Convert.ToByte(x, 16)).ToArray();
             var descriptor = personMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
 
-            var deserializer = new Deserializer(descriptor);
-            var map = deserializer.Deserialize(data);
+            // Used for performance test
+            //for (var i = 0; i < 1000000; i++)
+            //{
+            //    var deserializer = new Deserializer(descriptor);
+            //    deserializer.Deserialize<EdwinTestScenario1>(data);
+            //}
 
-            Console.WriteLine(map["email"]);
+            // Dynamic deserialising example...
+            // This first part of turning a descriptor into concrete types can only be done in non net standard and even then I'm not sure about the performance of this
+            // First we get the descriptor
+            var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptor);
+            var desc = fileDescriptorSet.File[0];
+
+            // Then we turn the message descriptor into a concrete type(s)
+            var types = new List<Type>();
+            foreach (var message in desc.MessageType)
+            {
+                var factory = new MessageTypeFactory(message);
+                types.Add(factory.GetConcreteType());
+            }
+            
+            Console.WriteLine($"Types count: {types.Count}");
+            Console.WriteLine("Printing out generated types with props...");
+            foreach (var type in types)
+            {
+                var props = type.GetProperties();
+                Console.WriteLine($"{type.FullName}");
+
+                foreach (var prop in props)
+                {
+                    Console.WriteLine($"{prop.Name}, {prop.PropertyType}");
+                }
+            }
+
+            // Then we deserialise using the type we get back
+            var targetType = types.FirstOrDefault();
+            var deserializer = new Deserializer(descriptor);
+            var objectInstance = deserializer.Deserialize(data, targetType);
+
+            Console.WriteLine(objectInstance);
+            
             Console.ReadLine();
+        }
+
+        private class EdwinTestScenario1
+        {
+            public string Name { get; set; }
+            public int Id { get; set; }
+            public string Email { get; set; }
         }
     }
 }

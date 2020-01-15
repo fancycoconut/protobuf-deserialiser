@@ -2,7 +2,6 @@
 using System.Linq;
 using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using ProtobufDeserializer.V2;
 
 namespace ProtobufDeserializer.Tests
 {
@@ -10,7 +9,7 @@ namespace ProtobufDeserializer.Tests
     public class OneOfTests
     {
         [TestMethod]
-        public void BasicOneOfWithOneFieldUsedToDictionaryTest()
+        public void BasicOneOfWithOneFieldUsedToObjectTest()
         {
             // Arrange
             var oneOfMessage = new OneOfExample
@@ -24,21 +23,20 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var map = deserializer.Deserialize(data);
+            var example = deserializer.Deserialize< OneOfExampleDeserialiseDto>(data);
 
             // Assert
-            Assert.AreEqual(7, map.Keys.Count);
-            Assert.AreEqual("one of test key", map["key"]);
-            Assert.AreEqual(null, map["bool_value"]);
-            Assert.AreEqual(42, map["int_value"]);
-            Assert.AreEqual(null, map["uint_value"]);
-            Assert.AreEqual(null, map["float_value"]);
-            Assert.AreEqual(null, map["string_value"]);
-            Assert.AreEqual(null, map["byte_value"]);
+            Assert.AreEqual("one of test key", example.key);
+            Assert.AreEqual(false, example.bool_value);
+            Assert.AreEqual(42, example.int_value);
+            Assert.AreEqual((uint)0, example.uint_value);
+            Assert.AreEqual(0f, example.float_value);
+            Assert.AreEqual(null, example.string_value);
+            Assert.AreEqual(null, example.byte_value);
         }
 
         [TestMethod]
-        public void BasicOneOfWithTwoFieldsUsedToDictionaryTest()
+        public void BasicOneOfWithTwoFieldsUsedToObjectTest()
         {
             // Arrange
             var oneOfMessage = new OneOfExample
@@ -53,16 +51,27 @@ namespace ProtobufDeserializer.Tests
 
             // Act
             var deserializer = new Deserializer(descriptor);
-            var map = deserializer.Deserialize(data);
+            var example = deserializer.Deserialize<OneOfExampleDeserialiseDto>(data);
 
             // Assert
-            Assert.AreEqual(7, map.Keys.Count);
-            Assert.AreEqual(null, map["bool_value"]);
-            Assert.AreEqual(null, map["int_value"]);
-            Assert.AreEqual(null, map["uint_value"]);
-            Assert.AreEqual(3.14f, map["float_value"]);
-            Assert.AreEqual(null, map["string_value"]);
-            Assert.AreEqual(null, map["byte_value"]);
+            Assert.AreEqual("one of test key", example.key);
+            Assert.AreEqual(false, example.bool_value);
+            Assert.AreEqual(0, example.int_value);
+            Assert.AreEqual((uint)0, example.uint_value);
+            Assert.AreEqual(3.14f, example.float_value);
+            Assert.AreEqual(null, example.string_value);
+            Assert.AreEqual(null, example.byte_value);
+        }
+
+        private class OneOfExampleDeserialiseDto
+        {
+            public string key { get; set; }
+            public bool bool_value { get; set; }
+            public int int_value { get; set; }
+            public uint uint_value { get; set; }
+            public float float_value { get; set; }
+            public string string_value { get; set; }
+            public byte[] byte_value { get; set; }
         }
     }
 }

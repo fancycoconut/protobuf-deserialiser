@@ -9,8 +9,6 @@ namespace ProtobufDeserializer.Types
 
         public override object ReadValue(CodedInputStream input)
         {
-            if (!base.CurrentFieldNumberIsCorrect(input)) return null;
-
             var tag = input.ReadTag();
             if (tag == 0 || input.IsAtEnd) return null;
 

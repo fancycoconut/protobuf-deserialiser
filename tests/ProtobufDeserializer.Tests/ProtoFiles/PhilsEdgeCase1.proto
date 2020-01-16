@@ -1,0 +1,5 @@
+﻿syntax = "proto3";
+
+message PhilEdge1 {
+	int32 Field1 = 1;
+}

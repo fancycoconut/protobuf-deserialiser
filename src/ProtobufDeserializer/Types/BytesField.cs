@@ -10,8 +10,6 @@ namespace ProtobufDeserializer.Types
 
         public override object ReadValue(CodedInputStream input)
         {
-            if (!base.CurrentFieldNumberIsCorrect(input)) return null;
-
             if (Label == FieldDescriptorProto.Types.Label.Repeated)
             {
                 throw new NotImplementedException();

@@ -1,25 +1,25 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
-using ProtobufDeserializer.Helpers;
+using ProtobufDeserializer.Reflection;
+using ProtobufDeserializer.Schema;
 
 namespace ProtobufDeserializer
 {
     public class Deserializer
     {
-        private readonly byte[] descriptorData;
+        private readonly ITypeProperties typeProperties;
+
+        private readonly Descriptor descriptor;
         private readonly Dictionary<string, IField> messageSchema;
-        private readonly Dictionary<Type, Queue<PropertyInfo>> propertiesCache;
 
-        public Deserializer(byte[] descriptor)
+        public Deserializer(byte[] descriptorData)
         {
-            descriptorData = descriptor;
-
-            messageSchema = GetMessageSchema();
-            propertiesCache = new Dictionary<Type, Queue<PropertyInfo>>();
+            this.descriptor = new Descriptor(descriptorData);
+            typeProperties = new CachedTypeProperties(new TypeProperties());
         }
 
         /// <summary>
@@ -40,7 +40,86 @@ namespace ProtobufDeserializer
         /// <returns></returns>
         public Dictionary<string, object> DeserializeToMap(byte[] data, string messageName)
         {
-            throw new NotImplementedException();
+            var messageMap = BuildMessageMap();
+            if (string.IsNullOrEmpty(messageName) && messageMap.Keys.Count > 1)
+                throw new ArgumentException("Please provide a message name since the descriptor contains multiple message types.");
+
+            if (string.IsNullOrEmpty(messageName) && messageMap.Keys.Count == 1)
+                messageName = messageMap.Keys.FirstOrDefault();
+
+            if (!messageMap.TryGetValue(messageName, out var fieldMap))
+                throw new ArgumentException("The provided message name does not match anything that is defined in the descriptor.");
+
+            using (var input = new CodedInputStream(data))
+            {
+                ReadFields(input, fieldMap, messageMap);
+            }
+
+            return fieldMap;
+        }
+
+        // This can/should be cached as well like how I cache property types...
+        private Dictionary<string, Dictionary<string, object>> BuildMessageMap()
+        {
+            //var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
+            //var descriptor = fileDescriptorSet.File[0];
+
+            //var map = new Dictionary<string, Dictionary<string, object>>();
+            //foreach (var message in descriptor.MessageType)
+            //{
+            //    var messageMap = new Dictionary<string, object>();
+            //    foreach (var field in message.Field)
+            //    {
+            //        messageMap.Add(field.Name, null);
+            //    }
+            //    map.Add(message.Name, messageMap);
+                
+            //    foreach (var nestedMessage in message.NestedType)
+            //    {
+            //        var nestedMessageMap = new Dictionary<string, object>();
+            //        foreach (var field in nestedMessage.Field)
+            //        {
+            //            nestedMessageMap.Add(field.Name, null);
+            //        }
+            //        map.Add(nestedMessage.Name, nestedMessageMap);
+            //    }
+            //}
+
+            //return map;
+
+            return new Dictionary<string, Dictionary<string, object>>();;
+        }
+
+        private void ReadFields(CodedInputStream input, Dictionary<string, object> fieldMap, IReadOnlyDictionary<string, Dictionary<string, object>> messageMap)
+        {
+            var propsQueue = new Queue<string>(fieldMap.Keys.ToList());
+            while (propsQueue.Count > 0)
+            {
+                var prop = propsQueue.Dequeue();
+                var tag = input.PeekTag();
+                if (tag == 0) break;
+
+                var field = descriptor.GetField(tag, prop);
+                if (field == null)
+                {
+                    propsQueue.Enqueue(prop);
+                    continue;
+                }
+
+                var propValue = field?.ReadValue(input);
+                if (field.Type == FieldDescriptorProto.Types.Type.Message)
+                {
+                    // TODO chanveg to trygetvalue
+                    var nestedMessage = messageMap[field.MessageName];
+
+                    ReadFields(input, nestedMessage, messageMap);
+                    fieldMap[prop] = nestedMessage;
+                }
+                else
+                {
+                    fieldMap[prop] = propValue;
+                }
+            }
         }
 
         /// <summary>
@@ -71,17 +150,78 @@ namespace ProtobufDeserializer
             return instance;
         }
 
+        // Original
+        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
+        //{
+        //    var propsQueue = GetProperties(targetInstanceType);
+        //    while (propsQueue.Count > 0)
+        //    {
+        //        var prop = propsQueue.Dequeue();
+        //        var tag = input.PeekTag();
+        //        if (tag == 0) break;
+
+        //        var field = GetField(tag, prop.Name);
+        //        if (field == null)
+        //        {
+        //            propsQueue.Enqueue(prop);
+        //            continue;
+        //        }
+
+
+        //        if (prop.PropertyType.IsPrimitive
+        //            || prop.PropertyType.IsEnum
+        //            || prop.PropertyType == typeof(string)
+        //            // TODO Test for decimal since float currently works
+        //            || prop.PropertyType == typeof(decimal))
+        //        {
+        //            var propValue = field?.ReadValue(input);
+        //            prop.SetValue(targetInstance, propValue);
+        //        }
+        //        else
+        //        {
+        //            // Lists and arrays
+        //            if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
+        //            {
+        //                var list = field?.ReadValue(input);
+        //                if (prop.PropertyType.IsArray && list != null)
+        //                {
+        //                    var toArray = list.GetType().GetMethod("ToArray");
+        //                    prop.SetValue(targetInstance, toArray?.Invoke(list, null));
+        //                }
+        //                else
+        //                {
+        //                    prop.SetValue(targetInstance, list);
+        //                }
+
+        //                continue;
+        //            }
+
+        //            // Nested Messages
+        //            // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
+        //            field?.ReadValue(input);
+
+        //            var instance = Activator.CreateInstance(prop.PropertyType);
+        //            ReadFields(input, instance, prop.PropertyType);
+        //            prop.SetValue(targetInstance, instance);
+        //        }
+        //    }
+        //}
+
+
+
+
+        // Queue approach, what happens if there is a field in the type that is not in the descriptor/message schema map would it lead to infinite loops?
         private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
         {
-            var propsQueue = GetProperties(targetInstanceType);
+            var propsQueue = typeProperties.GetQueue(targetInstanceType);
             while (propsQueue.Count > 0)
             {
                 var prop = propsQueue.Dequeue();
                 var tag = input.PeekTag();
                 if (tag == 0) break;
 
-                var field = GetFieldReader(tag, prop.Name);
-                if (field == null)
+                var field = descriptor.GetField(tag, prop.Name);
+                if (field == null && descriptor.FieldExists(prop.Name))
                 {
                     propsQueue.Enqueue(prop);
                     continue;
@@ -125,73 +265,6 @@ namespace ProtobufDeserializer
                     prop.SetValue(targetInstance, instance);
                 }
             }
-
-        }
-
-        private Queue<PropertyInfo> GetProperties(Type type)
-        {
-            if (propertiesCache.TryGetValue(type, out var props)) return props;
-
-            // We cache the queue to avoid generating it everytime... Which makes it blazingly fast...
-            props = new Queue<PropertyInfo>(type.GetProperties());
-            propertiesCache.Add(type, props);
-
-            return props;
-        }
-
-        private IField GetFieldReader(uint tag, string fieldName)
-        {
-            var key = $"{tag}_{fieldName}";
-            if (messageSchema.TryGetValue(key, out var field)) return field;
-
-            // Do we care about these other scenarios
-            key = $"{tag}_{fieldName.ToLower()}";
-            var lowerCasedFieldExists = messageSchema.TryGetValue(key, out field);
-            if (lowerCasedFieldExists) return field;
-
-            key = $"{tag}_{fieldName.ToUpper()}";
-            var upperCasedFieldExists = messageSchema.TryGetValue(key, out field);
-            return !upperCasedFieldExists ? null : field;
-        }
-
-        private Dictionary<string, IField> GetMessageSchema()
-        {
-            var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
-            var descriptor = fileDescriptorSet.File[0];
-
-            return ParseMessage(descriptor.MessageType);
-        }
-
-        // Breakthrough!! Soo I think because there is a consistent way of generating a tag therefore this handles duplicated fields as well :)
-        private static Dictionary<string, IField> ParseMessage(IEnumerable<DescriptorProto> messages)
-        {
-            var schema = new Dictionary<string, IField>();
-
-            foreach (var message in messages)
-            {
-                foreach (var field in message.Field)
-                {
-                    var tag = ProtobufHelper.ComputeFieldTag(field);
-                    AddItemToDictionary($"{tag}_{field.Name}", FieldFactory.Create(message.Name, field), schema);
-                }
-
-                foreach (var nestedMessage in message.NestedType)
-                {
-                    foreach (var field in nestedMessage.Field)
-                    {
-                        var tag = ProtobufHelper.ComputeFieldTag(field);
-                        AddItemToDictionary($"{tag}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field), schema);
-                    }
-                }
-            }
-
-            return schema;
-        }
-
-        private static void AddItemToDictionary<TKey, TValue>(TKey key, TValue item, IDictionary<TKey, TValue> dictionary)
-        {
-            if (dictionary.ContainsKey(key)) return;
-            dictionary.Add(key, item);
         }
     }
 }

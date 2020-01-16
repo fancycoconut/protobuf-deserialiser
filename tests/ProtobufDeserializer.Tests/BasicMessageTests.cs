@@ -61,6 +61,57 @@ namespace ProtobufDeserializer.Tests
             Assert.AreEqual(CustomerType.Vip, customer.Type);
             // Should ignore fields that don't exist and default them
             Assert.AreEqual(null, customer.LastName);
-        }        
+        }
+
+        [TestMethod]
+        public void BasicMessageToMap()
+        {
+            // Arrange
+            var expectedCustomer = new Customer
+            {
+                Id = 1,
+                FirstName = "Kawai",
+                Surname = "Wong",
+                Type = Customer.Types.CustomerType.Vip
+            };
+
+            var data = expectedCustomer.ToByteArray();
+            var descriptor = DescriptorHelper.Read("Customer.pb");
+
+            // Act
+            var deserializer = new Deserializer(descriptor);
+            var map = deserializer.DeserializeToMap(data, "");
+
+            // Assert
+            Assert.AreEqual(expectedCustomer.Id, map["Id"]);
+            Assert.AreEqual(expectedCustomer.FirstName, map["FirstName"]);
+            Assert.AreEqual(expectedCustomer.Surname, map["Surname"]);
+            Assert.AreEqual((int)CustomerType.Vip, map["Type"]);
+        }
+
+        [TestMethod]
+        public void BasicMessageMiddleFieldNotSetToMap()
+        {
+            // Arrange
+            var expectedCustomer = new Customer
+            {
+                Id = 1,
+                FirstName = "Kawai",
+                Type = Customer.Types.CustomerType.Vip
+            };
+
+            var data = expectedCustomer.ToByteArray();
+            var descriptor = DescriptorHelper.Read("Customer.pb");
+
+            // Act
+            var deserializer = new Deserializer(descriptor);
+            var map = deserializer.DeserializeToMap(data, "");
+
+            // Assert
+            Assert.AreEqual(expectedCustomer.Id, map["Id"]);
+            Assert.AreEqual(expectedCustomer.FirstName, map["FirstName"]);
+            Assert.AreEqual(null, map["Surname"]);
+            Assert.AreEqual((int)CustomerType.Vip, map["Type"]);
+        }
     }
 }

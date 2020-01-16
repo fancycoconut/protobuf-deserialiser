@@ -22,8 +22,8 @@ namespace ProtobufDeserializer.Tests
                 Type = Customer.Types.CustomerType.Vip
             };
 
-            var rawBtyes = "18,5,75,97,119,97,105,8,1,26,4,87,111,110,103,32,1".Split(',');
-            var data = rawBtyes.Select(x => Convert.ToByte(x)).ToArray();
+            var rawBytes = "18,5,75,97,119,97,105,8,1,26,4,87,111,110,103,32,1".Split(',');
+            var data = rawBytes.Select(x => Convert.ToByte(x)).ToArray();
             var descriptor = DescriptorHelper.Read("Customer.pb");
 
             // Act

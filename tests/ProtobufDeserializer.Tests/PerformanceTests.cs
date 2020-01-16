@@ -27,11 +27,12 @@ namespace ProtobufDeserializer.Tests
             var descriptor = customerMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
 
             // Act
+            var customer = new Dtos.Customer();
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 1000000; i++)
             {
-                var customer = deserializer.Deserialize<Dtos.Customer>(data);
+                customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
 

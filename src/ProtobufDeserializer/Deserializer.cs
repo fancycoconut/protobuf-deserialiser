@@ -150,76 +150,14 @@ namespace ProtobufDeserializer
             return instance;
         }
 
-        // Original
-        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
-        //{
-        //    var propsQueue = GetProperties(targetInstanceType);
-        //    while (propsQueue.Count > 0)
-        //    {
-        //        var prop = propsQueue.Dequeue();
-        //        var tag = input.PeekTag();
-        //        if (tag == 0) break;
-
-        //        var field = GetField(tag, prop.Name);
-        //        if (field == null)
-        //        {
-        //            propsQueue.Enqueue(prop);
-        //            continue;
-        //        }
-
-
-        //        if (prop.PropertyType.IsPrimitive
-        //            || prop.PropertyType.IsEnum
-        //            || prop.PropertyType == typeof(string)
-        //            // TODO Test for decimal since float currently works
-        //            || prop.PropertyType == typeof(decimal))
-        //        {
-        //            var propValue = field?.ReadValue(input);
-        //            prop.SetValue(targetInstance, propValue);
-        //        }
-        //        else
-        //        {
-        //            // Lists and arrays
-        //            if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
-        //            {
-        //                var list = field?.ReadValue(input);
-        //                if (prop.PropertyType.IsArray && list != null)
-        //                {
-        //                    var toArray = list.GetType().GetMethod("ToArray");
-        //                    prop.SetValue(targetInstance, toArray?.Invoke(list, null));
-        //                }
-        //                else
-        //                {
-        //                    prop.SetValue(targetInstance, list);
-        //                }
-
-        //                continue;
-        //            }
-
-        //            // Nested Messages
-        //            // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
-        //            field?.ReadValue(input);
-
-        //            var instance = Activator.CreateInstance(prop.PropertyType);
-        //            ReadFields(input, instance, prop.PropertyType);
-        //            prop.SetValue(targetInstance, instance);
-        //        }
-        //    }
-        //}
-
-
-
-
-        // Queue approach, what happens if there is a field in the type that is not in the descriptor/message schema map would it lead to infinite loops?
         private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
         {
+            uint tag = 0;
             var propsQueue = typeProperties.GetQueue(targetInstanceType);
-            while (propsQueue.Count > 0)
+
+            while ((tag = input.PeekTag()) != 0 && propsQueue.Count > 0)
             {
                 var prop = propsQueue.Dequeue();
-                var tag = input.PeekTag();
-                if (tag == 0) break;
-
                 var field = descriptor.GetField(tag, prop.Name);
                 if (field == null && descriptor.FieldExists(prop.Name))
                 {
@@ -227,12 +165,11 @@ namespace ProtobufDeserializer
                     continue;
                 }
 
-
                 if (prop.PropertyType.IsPrimitive
-                    || prop.PropertyType.IsEnum
-                    || prop.PropertyType == typeof(string)
-                    // TODO Test for decimal since float currently works
-                    || prop.PropertyType == typeof(decimal))
+                       || prop.PropertyType.IsEnum
+                       || prop.PropertyType == typeof(string)
+                       // TODO Test for decimal since float currently works
+                       || prop.PropertyType == typeof(decimal))
                 {
                     var propValue = field?.ReadValue(input);
                     prop.SetValue(targetInstance, propValue);

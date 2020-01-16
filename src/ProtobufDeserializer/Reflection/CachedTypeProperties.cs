@@ -25,7 +25,7 @@ namespace ProtobufDeserializer.Reflection
         {
             if (propertiesCache.TryGetValue(type, out var props)) return props;
 
-            // We cache the queue to avoid generating it every time... Which makes it blazingly fast...
+            // We cache the props to avoid reflecting it every time... Which makes it blazingly fast...
             props = typeProperties.Get(type);
             propertiesCache.Add(type, props);
 

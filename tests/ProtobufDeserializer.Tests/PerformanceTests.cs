@@ -39,6 +39,12 @@ namespace ProtobufDeserializer.Tests
             // Report
             var elapsedMs = watch.ElapsedMilliseconds;
             System.Diagnostics.Debug.WriteLine($"Elapsed Time: {elapsedMs}");
+
+            //Assert.AreEqual(expectedCustomer.Id, customer.Id);
+            //Assert.AreEqual(expectedCustomer.FirstName, customer.FirstName);
+            //Assert.AreEqual(expectedCustomer.Surname, customer.Surname);
+            //Assert.AreEqual(null, customer.LastName);
+            //Assert.AreEqual(CustomerType.Vip, customer.Type);
         }
 
         [TestMethod]
@@ -58,17 +64,24 @@ namespace ProtobufDeserializer.Tests
             var descriptor = customerMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
 
             // Act
+            var customer = new Dtos.Customer();
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 10000; i++)
             {
-                var customer = deserializer.Deserialize<Dtos.Customer>(data);
+                customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
 
             // Report
             var elapsedMs = watch.ElapsedMilliseconds;
             System.Diagnostics.Debug.WriteLine($"Elapsed Time: {elapsedMs}");
+
+            //Assert.AreEqual(expectedCustomer.Id, customer.Id);
+            //Assert.AreEqual(expectedCustomer.FirstName, customer.FirstName);
+            //Assert.AreEqual(expectedCustomer.Surname, customer.Surname);
+            //Assert.AreEqual(null, customer.LastName);
+            //Assert.AreEqual(CustomerType.Vip, customer.Type);
         }
 
         [TestMethod]
@@ -88,17 +101,24 @@ namespace ProtobufDeserializer.Tests
             var descriptor = customerMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
 
             // Act
+            var customer = new Dtos.Customer();
             var watch = System.Diagnostics.Stopwatch.StartNew();
             var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 10000; i++)
             {
-                var customer = deserializer.Deserialize<Dtos.Customer>(data);
+                customer = deserializer.Deserialize<Dtos.Customer>(data);
             }
             watch.Stop();
 
             // Report
             var elapsedMs = watch.ElapsedMilliseconds;
             System.Diagnostics.Debug.WriteLine($"Elapsed Time: {elapsedMs}");
+
+            //Assert.AreEqual(expectedCustomer.Id, customer.Id);
+            //Assert.AreEqual(expectedCustomer.FirstName, customer.FirstName);
+            //Assert.AreEqual(expectedCustomer.Surname, customer.Surname);
+            //Assert.AreEqual(null, customer.LastName);
+            //Assert.AreEqual(CustomerType.Vip, customer.Type);
         }
 
         [TestMethod]

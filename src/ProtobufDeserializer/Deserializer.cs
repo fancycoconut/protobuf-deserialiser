@@ -165,29 +165,29 @@ namespace ProtobufDeserializer
                     continue;
                 }
 
+                var propValue = field?.ReadValue(input);
+
                 if (prop.PropertyType.IsPrimitive
                        || prop.PropertyType.IsEnum
                        || prop.PropertyType == typeof(string)
                        // TODO Test for decimal since float currently works
                        || prop.PropertyType == typeof(decimal))
                 {
-                    var propValue = field?.ReadValue(input);
                     prop.SetValue(targetInstance, propValue);
                 }
                 else
                 {
                     // Lists and arrays
                     if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
-                    {
-                        var list = field?.ReadValue(input);
-                        if (prop.PropertyType.IsArray && list != null)
+                    {                        
+                        if (prop.PropertyType.IsArray && propValue != null)
                         {
-                            var toArray = list.GetType().GetMethod("ToArray");
-                            prop.SetValue(targetInstance, toArray?.Invoke(list, null));
+                            var toArray = propValue.GetType().GetMethod("ToArray");
+                            prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
                         }
                         else
                         {
-                            prop.SetValue(targetInstance, list);
+                            prop.SetValue(targetInstance, propValue);
                         }
 
                         continue;
@@ -195,7 +195,6 @@ namespace ProtobufDeserializer
 
                     // Nested Messages
                     // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
-                    field?.ReadValue(input);
 
                     var instance = Activator.CreateInstance(prop.PropertyType);
                     ReadFields(input, instance, prop.PropertyType);
@@ -203,5 +202,10 @@ namespace ProtobufDeserializer
                 }
             }
         }
+
+        //private void SetPropertyValue(object obj, object value)
+        //{
+
+        //}
     }
 }

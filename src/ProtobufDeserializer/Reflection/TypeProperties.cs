@@ -11,7 +11,12 @@ namespace ProtobufDeserializer.Reflection
             return new Queue<PropertyInfo>(type.GetProperties());
         }
 
-        public IEnumerable<PropertyInfo> Get(Type type)
+        public LinkedList<PropertyInfo> GetList(Type type)
+        {
+            return new LinkedList<PropertyInfo>(type.GetProperties());
+        }
+
+        public PropertyInfo[] Get(Type type)
         {
             return type.GetProperties();
         }

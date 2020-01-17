@@ -7,7 +7,7 @@ using ProtobufDeserializer.Tests.Helpers;
 namespace ProtobufDeserializer.Tests
 {
     [TestClass]
-    public class PhilsTestscs
+    public class PhilsTests
     {
         [TestMethod]
         public void EncodedMessageHasSameFieldAppearingTwiceInDataTest()
@@ -19,6 +19,7 @@ namespace ProtobufDeserializer.Tests
             //};
 
             //var test = msg.ToByteArray();
+            // The raw bytes have to be handcrafted
             // Same field Id first value is 919, second time is 2000
             var rawBytes = "8,151,7,8,208,15".Split(",");
             var data = rawBytes.Select(x => Convert.ToByte(x)).ToArray();

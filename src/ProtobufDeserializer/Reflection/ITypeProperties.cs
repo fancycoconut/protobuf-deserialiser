@@ -7,6 +7,8 @@ namespace ProtobufDeserializer.Reflection
     public interface ITypeProperties
     {
         Queue<PropertyInfo> GetQueue(Type type);
-        IEnumerable<PropertyInfo> Get(Type type);
+        LinkedList<PropertyInfo> GetList(Type type);
+
+        PropertyInfo[] Get(Type type);
     }
 }

@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
+using ProtobufDeserializer.Extensions;
 using ProtobufDeserializer.Reflection;
 using ProtobufDeserializer.Schema;
 
@@ -19,6 +21,7 @@ namespace ProtobufDeserializer
         public Deserializer(byte[] descriptorData)
         {
             this.descriptor = new Descriptor(descriptorData);
+
             typeProperties = new CachedTypeProperties(new TypeProperties());
         }
 
@@ -150,9 +153,66 @@ namespace ProtobufDeserializer
             return instance;
         }
 
+        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
+        //{
+        //    uint tag;
+        //    //var propsQueue = typeProperties.GetQueue(targetInstanceType);
+        //    var props = typeProperties.GetList(targetInstanceType);
+
+        //    var propNode = props.First;
+        //    while ((tag = input.PeekTag()) != 0)
+        //    {
+        //        var prop = propNode.Value;
+        //        propNode = propNode.NextOrFirst();
+
+        //        var field = descriptor.GetField(tag, prop.Name);
+        //        if (field == null)
+        //        {
+
+        //            continue;
+        //        }
+
+        //        var propValue = field?.ReadValue(input);
+
+        //        if (prop.PropertyType.IsPrimitive
+        //               || prop.PropertyType.IsEnum
+        //               || prop.PropertyType == typeof(string)
+        //               // TODO Test for decimal since float currently works
+        //               || prop.PropertyType == typeof(decimal))
+        //        {
+        //            prop.SetValue(targetInstance, propValue);
+        //        }
+        //        else
+        //        {
+        //            // Lists and arrays
+        //            if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
+        //            {
+        //                if (prop.PropertyType.IsArray && propValue != null)
+        //                {
+        //                    var toArray = propValue.GetType().GetMethod("ToArray");
+        //                    prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
+        //                }
+        //                else
+        //                {
+        //                    prop.SetValue(targetInstance, propValue);
+        //                }
+
+        //                continue;
+        //            }
+
+        //            // Nested Messages
+        //            // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
+
+        //            var instance = Activator.CreateInstance(prop.PropertyType);
+        //            ReadFields(input, instance, prop.PropertyType);
+        //            prop.SetValue(targetInstance, instance);
+        //        }
+        //    }
+        //}
+
         private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
         {
-            uint tag = 0;
+            uint tag;
             var propsQueue = typeProperties.GetQueue(targetInstanceType);
 
             while ((tag = input.PeekTag()) != 0 && propsQueue.Count > 0)
@@ -179,7 +239,7 @@ namespace ProtobufDeserializer
                 {
                     // Lists and arrays
                     if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
-                    {                        
+                    {
                         if (prop.PropertyType.IsArray && propValue != null)
                         {
                             var toArray = propValue.GetType().GetMethod("ToArray");
@@ -202,6 +262,59 @@ namespace ProtobufDeserializer
                 }
             }
         }
+
+        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
+        //{
+        //    uint tag;
+        //    var propsQueue = typeProperties.GetQueue(targetInstanceType);
+
+        //    while ((tag = input.PeekTag()) != 0 && propsQueue.Count > 0)
+        //    {
+        //        var prop = propsQueue.Dequeue();
+        //        var field = descriptor.GetField(tag, prop.Name);
+        //        if (field == null && descriptor.FieldExists(prop.Name))
+        //        {
+        //            propsQueue.Enqueue(prop);
+        //            continue;
+        //        }
+
+        //        var propValue = field?.ReadValue(input);
+
+        //        if (prop.PropertyType.IsPrimitive
+        //               || prop.PropertyType.IsEnum
+        //               || prop.PropertyType == typeof(string)
+        //               // TODO Test for decimal since float currently works
+        //               || prop.PropertyType == typeof(decimal))
+        //        {
+        //            prop.SetValue(targetInstance, propValue);
+        //        }
+        //        else
+        //        {
+        //            // Lists and arrays
+        //            if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
+        //            {
+        //                if (prop.PropertyType.IsArray && propValue != null)
+        //                {
+        //                    var toArray = propValue.GetType().GetMethod("ToArray");
+        //                    prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
+        //                }
+        //                else
+        //                {
+        //                    prop.SetValue(targetInstance, propValue);
+        //                }
+
+        //                continue;
+        //            }
+
+        //            // Nested Messages
+        //            // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
+
+        //            var instance = Activator.CreateInstance(prop.PropertyType);
+        //            ReadFields(input, instance, prop.PropertyType);
+        //            prop.SetValue(targetInstance, instance);
+        //        }
+        //    }
+        //}
 
         //private void SetPropertyValue(object obj, object value)
         //{

@@ -17,9 +17,9 @@ namespace ProtobufDeserializer.Example
             var descriptor = personMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
 
             // Used for performance test
-            var deserializer = new Deserializer(descriptor);
             for (var i = 0; i < 1000000; i++)
             {
+                var deserializer = new Deserializer(descriptor);
                 deserializer.Deserialize<EdwinTestScenario1>(data);
             }
 
@@ -57,7 +57,7 @@ namespace ProtobufDeserializer.Example
 
             //Console.WriteLine(objectInstance);
 
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         private class EdwinTestScenario1

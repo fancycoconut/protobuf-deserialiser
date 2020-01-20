@@ -11,6 +11,8 @@ namespace ProtobufDeserializer.Schema
         private readonly Dictionary<string, int> fieldMap;
         private readonly Dictionary<string, IField> messageFields;
 
+        private readonly Dictionary<string, Dictionary<string, object>> messageSchema;
+
         public Descriptor(byte[] descriptorData)
         {
             this.descriptorData = descriptorData;
@@ -21,6 +23,7 @@ namespace ProtobufDeserializer.Schema
 
             fieldMap = new Dictionary<string, int>();
             messageFields = new Dictionary<string, IField>();
+            messageSchema = new Dictionary<string, Dictionary<string, object>>();
 
             ParseMessages(descriptor.MessageType);
         }
@@ -42,31 +45,46 @@ namespace ProtobufDeserializer.Schema
 
         public bool FieldExists(string fieldName)
         {
-            return fieldMap.ContainsKey(fieldName);
+            var fieldExists = fieldMap.ContainsKey(fieldName);
+            if (fieldExists) return true;
+
+            var lowerCaseFieldExists = fieldMap.ContainsKey(fieldName.ToLower());
+            return lowerCaseFieldExists || fieldMap.ContainsKey(fieldName.ToUpper());
         }
+
+        public Dictionary<string, Dictionary<string, object>> GetMessageSchema() => messageSchema;
 
         // Breakthrough!! Soo I think because there is a consistent way of generating a tag therefore this handles duplicated fields as well :)
         private void ParseMessages(IEnumerable<DescriptorProto> messages)
         {
             foreach (var message in messages)
             {
+                var messageMap = new Dictionary<string, object>();
                 foreach (var field in message.Field)
                 {
                     var tag = ProtobufHelper.ComputeFieldTag(field);
 
                     fieldMap.AddIfNotExists(field.Name, 0);
                     messageFields.AddIfNotExists($"{tag}_{field.Name}", FieldFactory.Create(message.Name, field));
+
+                    messageMap.Add(field.Name, null);
                 }
+                messageSchema.AddIfNotExists(message.Name, messageMap);
 
                 foreach (var nestedMessage in message.NestedType)
                 {
+                    var nestedMessageMap = new Dictionary<string, object>();
                     foreach (var field in nestedMessage.Field)
                     {
                         var tag = ProtobufHelper.ComputeFieldTag(field);
 
                         fieldMap.AddIfNotExists(field.Name, 0);
                         messageFields.AddIfNotExists($"{tag}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field));
+
+                        nestedMessageMap.Add(field.Name, null);
                     }
+
+                    messageSchema.AddIfNotExists(nestedMessage.Name, nestedMessageMap);
                 }
             }
         }

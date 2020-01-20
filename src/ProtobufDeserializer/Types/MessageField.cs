@@ -13,7 +13,7 @@ namespace ProtobufDeserializer.Types
             var tag = input.ReadTag();
             if (tag == 0 || input.IsAtEnd) return null;
 
-            var unknownValue = input.ReadTag();
+            var length = input.ReadLength();
 
             // It doesn't matter for a message type because you need to proceed with reading off the fields within that given message
             // So in the case of a message we simply don't do anything...

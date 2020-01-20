@@ -6,6 +6,7 @@ using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Extensions;
+using ProtobufDeserializer.Helpers;
 using ProtobufDeserializer.Reflection;
 using ProtobufDeserializer.Schema;
 
@@ -43,84 +44,84 @@ namespace ProtobufDeserializer
         /// <returns></returns>
         public Dictionary<string, object> DeserializeToMap(byte[] data, string messageName)
         {
-            var messageMap = BuildMessageMap();
-            if (string.IsNullOrEmpty(messageName) && messageMap.Keys.Count > 1)
+            var messageSchema = descriptor.GetMessageSchema();
+            if (string.IsNullOrEmpty(messageName) && messageSchema.Keys.Count > 1)
                 throw new ArgumentException("Please provide a message name since the descriptor contains multiple message types.");
 
-            if (string.IsNullOrEmpty(messageName) && messageMap.Keys.Count == 1)
-                messageName = messageMap.Keys.FirstOrDefault();
+            if (string.IsNullOrEmpty(messageName) && messageSchema.Keys.Count == 1)
+                messageName = messageSchema.Keys.FirstOrDefault();
 
-            if (!messageMap.TryGetValue(messageName, out var fieldMap))
+            if (!messageSchema.TryGetValue(messageName, out var message))
                 throw new ArgumentException("The provided message name does not match anything that is defined in the descriptor.");
 
             using (var input = new CodedInputStream(data))
             {
-                ReadFields(input, fieldMap, messageMap);
+                ReadFields(input, message);
             }
 
-            return fieldMap;
+            return message;
         }
 
-        // This can/should be cached as well like how I cache property types...
-        private Dictionary<string, Dictionary<string, object>> BuildMessageMap()
+        private void ReadFields(CodedInputStream input, Dictionary<string, object> message)
         {
-            //var fileDescriptorSet = FileDescriptorSet.Parser.ParseFrom(descriptorData);
-            //var descriptor = fileDescriptorSet.File[0];
-
-            //var map = new Dictionary<string, Dictionary<string, object>>();
-            //foreach (var message in descriptor.MessageType)
-            //{
-            //    var messageMap = new Dictionary<string, object>();
-            //    foreach (var field in message.Field)
-            //    {
-            //        messageMap.Add(field.Name, null);
-            //    }
-            //    map.Add(message.Name, messageMap);
-                
-            //    foreach (var nestedMessage in message.NestedType)
-            //    {
-            //        var nestedMessageMap = new Dictionary<string, object>();
-            //        foreach (var field in nestedMessage.Field)
-            //        {
-            //            nestedMessageMap.Add(field.Name, null);
-            //        }
-            //        map.Add(nestedMessage.Name, nestedMessageMap);
-            //    }
-            //}
-
-            //return map;
-
-            return new Dictionary<string, Dictionary<string, object>>();;
-        }
-
-        private void ReadFields(CodedInputStream input, Dictionary<string, object> fieldMap, IReadOnlyDictionary<string, Dictionary<string, object>> messageMap)
-        {
-            var propsQueue = new Queue<string>(fieldMap.Keys.ToList());
-            while (propsQueue.Count > 0)
+            uint tag;
+            while ((tag = input.PeekTag()) != 0)
             {
-                var prop = propsQueue.Dequeue();
-                var tag = input.PeekTag();
-                if (tag == 0) break;
-
-                var field = descriptor.GetField(tag, prop);
-                if (field == null)
+                foreach (var key in message.Keys)
                 {
-                    propsQueue.Enqueue(prop);
-                    continue;
-                }
+                    var field = descriptor.GetField(tag, key);
+                    if (field == null) continue;
+                    var propValue = field?.ReadValue(input);
 
-                var propValue = field?.ReadValue(input);
-                if (field.Type == FieldDescriptorProto.Types.Type.Message)
-                {
-                    // TODO chanveg to trygetvalue
-                    var nestedMessage = messageMap[field.MessageName];
+                    if (field.Type == FieldDescriptorProto.Types.Type.Message)
+                    {
+                        return;
+                    }
 
-                    ReadFields(input, nestedMessage, messageMap);
-                    fieldMap[prop] = nestedMessage;
-                }
-                else
-                {
-                    fieldMap[prop] = propValue;
+
+
+
+
+
+                    message[key] = propValue;
+                    break;
+
+                    
+
+
+                    //if (prop.PropertyType.IsPrimitive
+                    //    || prop.PropertyType.IsEnum
+                    //    || prop.PropertyType == typeof(string)
+                    //    // TODO Test for decimal since float currently works
+                    //    || prop.PropertyType == typeof(decimal))
+                    //{
+                    //    prop.SetValue(targetInstance, propValue);
+                    //}
+                    //else
+                    //{
+                    //    // Lists and arrays
+                    //    if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
+                    //    {
+                    //        if (prop.PropertyType.IsArray && propValue != null)
+                    //        {
+                    //            var toArray = propValue.GetType().GetMethod("ToArray");
+                    //            prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
+                    //        }
+                    //        else
+                    //        {
+                    //            prop.SetValue(targetInstance, propValue);
+                    //        }
+
+                    //        continue;
+                    //    }
+
+                    //    // Nested Messages
+                    //    // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
+
+                    //    var instance = Activator.CreateInstance(prop.PropertyType);
+                    //    ReadFields(input, instance, prop.PropertyType);
+                    //    prop.SetValue(targetInstance, instance);
+                    //}
                 }
             }
         }
@@ -153,79 +154,25 @@ namespace ProtobufDeserializer
             return instance;
         }
 
-        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
-        //{
-        //    uint tag;
-        //    //var propsQueue = typeProperties.GetQueue(targetInstanceType);
-        //    var props = typeProperties.GetList(targetInstanceType);
-
-        //    var propNode = props.First;
-        //    while ((tag = input.PeekTag()) != 0)
-        //    {
-        //        var prop = propNode.Value;
-        //        propNode = propNode.NextOrFirst();
-
-        //        var field = descriptor.GetField(tag, prop.Name);
-        //        if (field == null)
-        //        {
-
-        //            continue;
-        //        }
-
-        //        var propValue = field?.ReadValue(input);
-
-        //        if (prop.PropertyType.IsPrimitive
-        //               || prop.PropertyType.IsEnum
-        //               || prop.PropertyType == typeof(string)
-        //               // TODO Test for decimal since float currently works
-        //               || prop.PropertyType == typeof(decimal))
-        //        {
-        //            prop.SetValue(targetInstance, propValue);
-        //        }
-        //        else
-        //        {
-        //            // Lists and arrays
-        //            if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
-        //            {
-        //                if (prop.PropertyType.IsArray && propValue != null)
-        //                {
-        //                    var toArray = propValue.GetType().GetMethod("ToArray");
-        //                    prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
-        //                }
-        //                else
-        //                {
-        //                    prop.SetValue(targetInstance, propValue);
-        //                }
-
-        //                continue;
-        //            }
-
-        //            // Nested Messages
-        //            // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
-
-        //            var instance = Activator.CreateInstance(prop.PropertyType);
-        //            ReadFields(input, instance, prop.PropertyType);
-        //            prop.SetValue(targetInstance, instance);
-        //        }
-        //    }
-        //}
-
         private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
         {
             uint tag;
-            var propsQueue = typeProperties.GetQueue(targetInstanceType);
+            var props = typeProperties.GetList(targetInstanceType);
 
-            while ((tag = input.PeekTag()) != 0 && propsQueue.Count > 0)
+            var propNode = props.First;
+            while ((tag = input.PeekTag()) != 0)
             {
-                var prop = propsQueue.Dequeue();
-                var field = descriptor.GetField(tag, prop.Name);
-                if (field == null && descriptor.FieldExists(prop.Name))
-                {
-                    propsQueue.Enqueue(prop);
-                    continue;
-                }
+                if (ProtobufHelper.ComputeFieldNumber((int)tag) > props.Count)
+                    return;
 
-                var propValue = field?.ReadValue(input);
+                var prop = propNode.Value;
+                propNode = propNode.NextOrFirst();
+                if (!descriptor.FieldExists(prop.Name)) continue;
+
+                var field = descriptor.GetField(tag, prop.Name);
+                if (field == null) continue;
+
+                var propValue = field.ReadValue(input);
 
                 if (prop.PropertyType.IsPrimitive
                        || prop.PropertyType.IsEnum
@@ -262,6 +209,59 @@ namespace ProtobufDeserializer
                 }
             }
         }
+
+        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
+        //{
+        //    uint tag;
+        //    var props = typeProperties.Get(targetInstanceType);
+
+        //    while ((tag = input.PeekTag()) != 0)
+        //    {
+        //        foreach (var prop in props)
+        //        {
+        //            if (!descriptor.FieldExists(prop.Name)) continue;
+        //            var field = descriptor.GetField(tag, prop.Name);
+        //            if (field == null) continue;
+
+        //            var propValue = field?.ReadValue(input);
+        //            if (prop.PropertyType.IsPrimitive
+        //                || prop.PropertyType.IsEnum
+        //                || prop.PropertyType == typeof(string)
+        //                // TODO Test for decimal since float currently works
+        //                || prop.PropertyType == typeof(decimal))
+        //            {
+        //                prop.SetValue(targetInstance, propValue);
+        //                break;
+        //            }
+        //            else
+        //            {
+        //                // Lists and arrays
+        //                if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
+        //                {
+        //                    if (prop.PropertyType.IsArray && propValue != null)
+        //                    {
+        //                        var toArray = propValue.GetType().GetMethod("ToArray");
+        //                        prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
+        //                    }
+        //                    else
+        //                    {
+        //                        prop.SetValue(targetInstance, propValue);
+        //                    }
+
+        //                    break;
+        //                }
+
+        //                // Nested Messages
+        //                // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
+
+        //                var instance = Activator.CreateInstance(prop.PropertyType);
+        //                ReadFields(input, instance, prop.PropertyType);
+        //                prop.SetValue(targetInstance, instance);
+        //                break;
+        //            }
+        //        }
+        //    }
+        //}
 
         //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
         //{

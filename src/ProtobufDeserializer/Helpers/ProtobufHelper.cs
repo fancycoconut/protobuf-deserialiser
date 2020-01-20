@@ -11,6 +11,11 @@ namespace ProtobufDeserializer.Helpers
             return (field.Number << 3) | GetWireType(field);
         }
 
+        public static int ComputeFieldNumber(int tag)
+        {
+            return (tag & 0xF8) >> 3;
+        }
+
         // TODO Refactor/change this....
         public static int GetWireType(FieldDescriptorProto field)
         {

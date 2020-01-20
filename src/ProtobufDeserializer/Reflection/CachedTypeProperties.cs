@@ -19,12 +19,6 @@ namespace ProtobufDeserializer.Reflection
             propertiesListCache = new Dictionary<Type, LinkedList<PropertyInfo>>();
         }
 
-        public Queue<PropertyInfo> GetQueue(Type type)
-        {
-            var props = Get(type);
-            return new Queue<PropertyInfo>(props);
-        }
-
         public LinkedList<PropertyInfo> GetList(Type type)
         {
             if (propertiesListCache.TryGetValue(type, out var props)) return props;

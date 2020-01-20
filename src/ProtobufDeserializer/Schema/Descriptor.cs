@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Extensions;
 using ProtobufDeserializer.Helpers;
@@ -56,16 +57,14 @@ namespace ProtobufDeserializer.Schema
 
         // Breakthrough!! Soo I think because there is a consistent way of generating a tag therefore this handles duplicated fields as well :)
         private void ParseMessages(IEnumerable<DescriptorProto> messages)
-        {
+        {         
             foreach (var message in messages)
             {
                 var messageMap = new Dictionary<string, object>();
                 foreach (var field in message.Field)
                 {
-                    var tag = ProtobufHelper.ComputeFieldTag(field);
-
                     fieldMap.AddIfNotExists(field.Name, 0);
-                    messageFields.AddIfNotExists($"{tag}_{field.Name}", FieldFactory.Create(message.Name, field));
+                    messageFields.AddIfNotExists($"{field.ComputeFieldTag()}_{field.Name}", FieldFactory.Create(message.Name, field));
 
                     messageMap.Add(field.Name, null);
                 }
@@ -76,10 +75,8 @@ namespace ProtobufDeserializer.Schema
                     var nestedMessageMap = new Dictionary<string, object>();
                     foreach (var field in nestedMessage.Field)
                     {
-                        var tag = ProtobufHelper.ComputeFieldTag(field);
-
                         fieldMap.AddIfNotExists(field.Name, 0);
-                        messageFields.AddIfNotExists($"{tag}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field));
+                        messageFields.AddIfNotExists($"{field.ComputeFieldTag()}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field));
 
                         nestedMessageMap.Add(field.Name, null);
                     }

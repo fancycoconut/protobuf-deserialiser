@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Extensions;
@@ -172,41 +173,44 @@ namespace ProtobufDeserializer
                 if (field == null) continue;
 
                 var propValue = field.ReadValue(input);
+                SetProperty(input, prop, propValue, targetInstance);
+            }
+        }
 
-                if (prop.PropertyType.IsPrimitive
-                       || prop.PropertyType.IsEnum
-                       || prop.PropertyType == typeof(string)
-                       // TODO Test for decimal since float currently works
-                       || prop.PropertyType == typeof(decimal))
+        private void SetProperty(CodedInputStream input, PropertyInfo prop, object propertyValue, object targetInstance)
+        {
+            if (prop.PropertyType.IsPrimitive
+                || prop.PropertyType.IsEnum
+                || prop.PropertyType == typeof(string)
+                // TODO Test for decimal since float currently works
+                || prop.PropertyType == typeof(decimal))
+            {
+                prop.SetValue(targetInstance, propertyValue);
+                return;
+            }
+
+            // Lists and arrays
+            if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
+            {
+                if (prop.PropertyType.IsArray && propertyValue != null)
                 {
-                    prop.SetValue(targetInstance, propValue);
+                    var toArray = propertyValue.GetType().GetMethod("ToArray");
+                    prop.SetValue(targetInstance, toArray?.Invoke(propertyValue, null));
                 }
                 else
                 {
-                    // Lists and arrays
-                    if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
-                    {
-                        if (prop.PropertyType.IsArray && propValue != null)
-                        {
-                            var toArray = propValue.GetType().GetMethod("ToArray");
-                            prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
-                        }
-                        else
-                        {
-                            prop.SetValue(targetInstance, propValue);
-                        }
-
-                        continue;
-                    }
-
-                    // Nested Messages
-                    // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
-
-                    var instance = Activator.CreateInstance(prop.PropertyType);
-                    ReadFields(input, instance, prop.PropertyType);
-                    prop.SetValue(targetInstance, instance);
+                    prop.SetValue(targetInstance, propertyValue);
                 }
+
+                return;
             }
+
+            // Nested Messages
+            // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
+
+            var instance = Activator.CreateInstance(prop.PropertyType);
+            ReadFields(input, instance, prop.PropertyType);
+            prop.SetValue(targetInstance, instance);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Extensions;
@@ -209,116 +208,5 @@ namespace ProtobufDeserializer
                 }
             }
         }
-
-        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
-        //{
-        //    uint tag;
-        //    var props = typeProperties.Get(targetInstanceType);
-
-        //    while ((tag = input.PeekTag()) != 0)
-        //    {
-        //        foreach (var prop in props)
-        //        {
-        //            if (!descriptor.FieldExists(prop.Name)) continue;
-        //            var field = descriptor.GetField(tag, prop.Name);
-        //            if (field == null) continue;
-
-        //            var propValue = field?.ReadValue(input);
-        //            if (prop.PropertyType.IsPrimitive
-        //                || prop.PropertyType.IsEnum
-        //                || prop.PropertyType == typeof(string)
-        //                // TODO Test for decimal since float currently works
-        //                || prop.PropertyType == typeof(decimal))
-        //            {
-        //                prop.SetValue(targetInstance, propValue);
-        //                break;
-        //            }
-        //            else
-        //            {
-        //                // Lists and arrays
-        //                if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
-        //                {
-        //                    if (prop.PropertyType.IsArray && propValue != null)
-        //                    {
-        //                        var toArray = propValue.GetType().GetMethod("ToArray");
-        //                        prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
-        //                    }
-        //                    else
-        //                    {
-        //                        prop.SetValue(targetInstance, propValue);
-        //                    }
-
-        //                    break;
-        //                }
-
-        //                // Nested Messages
-        //                // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
-
-        //                var instance = Activator.CreateInstance(prop.PropertyType);
-        //                ReadFields(input, instance, prop.PropertyType);
-        //                prop.SetValue(targetInstance, instance);
-        //                break;
-        //            }
-        //        }
-        //    }
-        //}
-
-        //private void ReadFields(CodedInputStream input, object targetInstance, Type targetInstanceType)
-        //{
-        //    uint tag;
-        //    var propsQueue = typeProperties.GetQueue(targetInstanceType);
-
-        //    while ((tag = input.PeekTag()) != 0 && propsQueue.Count > 0)
-        //    {
-        //        var prop = propsQueue.Dequeue();
-        //        var field = descriptor.GetField(tag, prop.Name);
-        //        if (field == null && descriptor.FieldExists(prop.Name))
-        //        {
-        //            propsQueue.Enqueue(prop);
-        //            continue;
-        //        }
-
-        //        var propValue = field?.ReadValue(input);
-
-        //        if (prop.PropertyType.IsPrimitive
-        //               || prop.PropertyType.IsEnum
-        //               || prop.PropertyType == typeof(string)
-        //               // TODO Test for decimal since float currently works
-        //               || prop.PropertyType == typeof(decimal))
-        //        {
-        //            prop.SetValue(targetInstance, propValue);
-        //        }
-        //        else
-        //        {
-        //            // Lists and arrays
-        //            if (prop.PropertyType.GetInterface(nameof(IEnumerable)) != null)
-        //            {
-        //                if (prop.PropertyType.IsArray && propValue != null)
-        //                {
-        //                    var toArray = propValue.GetType().GetMethod("ToArray");
-        //                    prop.SetValue(targetInstance, toArray?.Invoke(propValue, null));
-        //                }
-        //                else
-        //                {
-        //                    prop.SetValue(targetInstance, propValue);
-        //                }
-
-        //                continue;
-        //            }
-
-        //            // Nested Messages
-        //            // Before we actually parse fields for a nested message, we need to read off/shave off some extra bytes first
-
-        //            var instance = Activator.CreateInstance(prop.PropertyType);
-        //            ReadFields(input, instance, prop.PropertyType);
-        //            prop.SetValue(targetInstance, instance);
-        //        }
-        //    }
-        //}
-
-        //private void SetPropertyValue(object obj, object value)
-        //{
-
-        //}
     }
 }

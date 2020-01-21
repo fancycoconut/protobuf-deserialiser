@@ -1,0 +1,8 @@
+﻿syntax = "proto3";
+
+message RepeatedFieldsExample {
+	int32 Id = 1;
+	string Name = 2;
+	repeated string Students = 3;
+	repeated int32 Ages = 4;
+}

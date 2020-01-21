@@ -18,6 +18,7 @@ namespace ProtobufDeserializer.Types
 
             var tag = input.ReadTag();
             var fieldCodec = FieldCodec.ForInt32(tag);
+
             if (tag == 0 || input.IsAtEnd) return null;
 
             return fieldCodec.Read(input);

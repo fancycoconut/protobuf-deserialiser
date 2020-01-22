@@ -17,10 +17,11 @@ namespace ProtobufDeserializer.Example
             var descriptor = personMessageDescriptor.Select(x => Convert.ToByte(x, 16)).ToArray();
 
             // Used for performance test
+            var dto = new EdwinTestScenario1();
             for (var i = 0; i < 1000000; i++)
             {
                 var deserializer = new Deserializer(descriptor);
-                deserializer.Deserialize<EdwinTestScenario1>(data);
+                dto = deserializer.Deserialize<EdwinTestScenario1>(data);
             }
 
             // Dynamic deserialising example...

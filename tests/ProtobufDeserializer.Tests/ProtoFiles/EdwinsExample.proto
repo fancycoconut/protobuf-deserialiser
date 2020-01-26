@@ -1,4 +1,7 @@
 ﻿syntax = "proto3";
+
+package tests.sample.jumbled.fields;
+
 message Person {
 	int32 id = 2;
 	string email = 3;

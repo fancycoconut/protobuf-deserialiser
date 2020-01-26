@@ -9,259 +9,263 @@ using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
-/// <summary>Holder for reflection information generated from Customer.proto</summary>
-public static partial class CustomerReflection {
+namespace Tests.Sample.Customer {
 
-  #region Descriptor
-  /// <summary>File descriptor for Customer.proto</summary>
-  public static pbr::FileDescriptor Descriptor {
-    get { return descriptor; }
+  /// <summary>Holder for reflection information generated from Customer.proto</summary>
+  public static partial class CustomerReflection {
+
+    #region Descriptor
+    /// <summary>File descriptor for Customer.proto</summary>
+    public static pbr::FileDescriptor Descriptor {
+      get { return descriptor; }
+    }
+    private static pbr::FileDescriptor descriptor;
+
+    static CustomerReflection() {
+      byte[] descriptorData = global::System.Convert.FromBase64String(
+          string.Concat(
+            "Cg5DdXN0b21lci5wcm90bxIVdGVzdHMuc2FtcGxlLmN1c3RvbWVyIpsBCghD",
+            "dXN0b21lchIKCgJJZBgBIAEoBRIRCglGaXJzdE5hbWUYAiABKAkSDwoHU3Vy",
+            "bmFtZRgDIAEoCRI6CgRUeXBlGAQgASgOMiwudGVzdHMuc2FtcGxlLmN1c3Rv",
+            "bWVyLkN1c3RvbWVyLkN1c3RvbWVyVHlwZSIjCgxDdXN0b21lclR5cGUSCgoG",
+            "Tm9ybWFsEAASBwoDVklQEAFiBnByb3RvMw=="));
+      descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
+          new pbr::FileDescriptor[] { },
+          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Tests.Sample.Customer.Customer), global::Tests.Sample.Customer.Customer.Parser, new[]{ "Id", "FirstName", "Surname", "Type" }, null, new[]{ typeof(global::Tests.Sample.Customer.Customer.Types.CustomerType) }, null, null)
+          }));
+    }
+    #endregion
+
   }
-  private static pbr::FileDescriptor descriptor;
+  #region Messages
+  public sealed partial class Customer : pb::IMessage<Customer> {
+    private static readonly pb::MessageParser<Customer> _parser = new pb::MessageParser<Customer>(() => new Customer());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<Customer> Parser { get { return _parser; } }
 
-  static CustomerReflection() {
-    byte[] descriptorData = global::System.Convert.FromBase64String(
-        string.Concat(
-          "Cg5DdXN0b21lci5wcm90byKFAQoIQ3VzdG9tZXISCgoCSWQYASABKAUSEQoJ",
-          "Rmlyc3ROYW1lGAIgASgJEg8KB1N1cm5hbWUYAyABKAkSJAoEVHlwZRgEIAEo",
-          "DjIWLkN1c3RvbWVyLkN1c3RvbWVyVHlwZSIjCgxDdXN0b21lclR5cGUSCgoG",
-          "Tm9ybWFsEAASBwoDVklQEAFiBnByb3RvMw=="));
-    descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-        new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::Customer), global::Customer.Parser, new[]{ "Id", "FirstName", "Surname", "Type" }, null, new[]{ typeof(global::Customer.Types.CustomerType) }, null, null)
-        }));
-  }
-  #endregion
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Tests.Sample.Customer.CustomerReflection.Descriptor.MessageTypes[0]; }
+    }
 
-}
-#region Messages
-public sealed partial class Customer : pb::IMessage<Customer> {
-  private static readonly pb::MessageParser<Customer> _parser = new pb::MessageParser<Customer>(() => new Customer());
-  private pb::UnknownFieldSet _unknownFields;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public static pb::MessageParser<Customer> Parser { get { return _parser; } }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public static pbr::MessageDescriptor Descriptor {
-    get { return global::CustomerReflection.Descriptor.MessageTypes[0]; }
-  }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Customer() {
+      OnConstruction();
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  pbr::MessageDescriptor pb::IMessage.Descriptor {
-    get { return Descriptor; }
-  }
+    partial void OnConstruction();
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public Customer() {
-    OnConstruction();
-  }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Customer(Customer other) : this() {
+      id_ = other.id_;
+      firstName_ = other.firstName_;
+      surname_ = other.surname_;
+      type_ = other.type_;
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
 
-  partial void OnConstruction();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public Customer Clone() {
+      return new Customer(this);
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public Customer(Customer other) : this() {
-    id_ = other.id_;
-    firstName_ = other.firstName_;
-    surname_ = other.surname_;
-    type_ = other.type_;
-    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-  }
+    /// <summary>Field number for the "Id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private int id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public Customer Clone() {
-    return new Customer(this);
-  }
+    /// <summary>Field number for the "FirstName" field.</summary>
+    public const int FirstNameFieldNumber = 2;
+    private string firstName_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string FirstName {
+      get { return firstName_; }
+      set {
+        firstName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
+    }
 
-  /// <summary>Field number for the "Id" field.</summary>
-  public const int IdFieldNumber = 1;
-  private int id_;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public int Id {
-    get { return id_; }
-    set {
-      id_ = value;
+    /// <summary>Field number for the "Surname" field.</summary>
+    public const int SurnameFieldNumber = 3;
+    private string surname_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Surname {
+      get { return surname_; }
+      set {
+        surname_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
     }
-  }
 
-  /// <summary>Field number for the "FirstName" field.</summary>
-  public const int FirstNameFieldNumber = 2;
-  private string firstName_ = "";
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public string FirstName {
-    get { return firstName_; }
-    set {
-      firstName_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    /// <summary>Field number for the "Type" field.</summary>
+    public const int TypeFieldNumber = 4;
+    private global::Tests.Sample.Customer.Customer.Types.CustomerType type_ = global::Tests.Sample.Customer.Customer.Types.CustomerType.Normal;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public global::Tests.Sample.Customer.Customer.Types.CustomerType Type {
+      get { return type_; }
+      set {
+        type_ = value;
+      }
     }
-  }
 
-  /// <summary>Field number for the "Surname" field.</summary>
-  public const int SurnameFieldNumber = 3;
-  private string surname_ = "";
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public string Surname {
-    get { return surname_; }
-    set {
-      surname_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as Customer);
     }
-  }
 
-  /// <summary>Field number for the "Type" field.</summary>
-  public const int TypeFieldNumber = 4;
-  private global::Customer.Types.CustomerType type_ = global::Customer.Types.CustomerType.Normal;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public global::Customer.Types.CustomerType Type {
-    get { return type_; }
-    set {
-      type_ = value;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(Customer other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Id != other.Id) return false;
+      if (FirstName != other.FirstName) return false;
+      if (Surname != other.Surname) return false;
+      if (Type != other.Type) return false;
+      return Equals(_unknownFields, other._unknownFields);
     }
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public override bool Equals(object other) {
-    return Equals(other as Customer);
-  }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Id != 0) hash ^= Id.GetHashCode();
+      if (FirstName.Length != 0) hash ^= FirstName.GetHashCode();
+      if (Surname.Length != 0) hash ^= Surname.GetHashCode();
+      if (Type != global::Tests.Sample.Customer.Customer.Types.CustomerType.Normal) hash ^= Type.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public bool Equals(Customer other) {
-    if (ReferenceEquals(other, null)) {
-      return false;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
     }
-    if (ReferenceEquals(other, this)) {
-      return true;
-    }
-    if (Id != other.Id) return false;
-    if (FirstName != other.FirstName) return false;
-    if (Surname != other.Surname) return false;
-    if (Type != other.Type) return false;
-    return Equals(_unknownFields, other._unknownFields);
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public override int GetHashCode() {
-    int hash = 1;
-    if (Id != 0) hash ^= Id.GetHashCode();
-    if (FirstName.Length != 0) hash ^= FirstName.GetHashCode();
-    if (Surname.Length != 0) hash ^= Surname.GetHashCode();
-    if (Type != global::Customer.Types.CustomerType.Normal) hash ^= Type.GetHashCode();
-    if (_unknownFields != null) {
-      hash ^= _unknownFields.GetHashCode();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Id);
+      }
+      if (FirstName.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(FirstName);
+      }
+      if (Surname.Length != 0) {
+        output.WriteRawTag(26);
+        output.WriteString(Surname);
+      }
+      if (Type != global::Tests.Sample.Customer.Customer.Types.CustomerType.Normal) {
+        output.WriteRawTag(32);
+        output.WriteEnum((int) Type);
+      }
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
     }
-    return hash;
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public override string ToString() {
-    return pb::JsonFormatter.ToDiagnosticString(this);
-  }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
+      }
+      if (FirstName.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(FirstName);
+      }
+      if (Surname.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Surname);
+      }
+      if (Type != global::Tests.Sample.Customer.Customer.Types.CustomerType.Normal) {
+        size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
+      }
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void WriteTo(pb::CodedOutputStream output) {
-    if (Id != 0) {
-      output.WriteRawTag(8);
-      output.WriteInt32(Id);
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(Customer other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
+      }
+      if (other.FirstName.Length != 0) {
+        FirstName = other.FirstName;
+      }
+      if (other.Surname.Length != 0) {
+        Surname = other.Surname;
+      }
+      if (other.Type != global::Tests.Sample.Customer.Customer.Types.CustomerType.Normal) {
+        Type = other.Type;
+      }
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
-    if (FirstName.Length != 0) {
-      output.WriteRawTag(18);
-      output.WriteString(FirstName);
-    }
-    if (Surname.Length != 0) {
-      output.WriteRawTag(26);
-      output.WriteString(Surname);
-    }
-    if (Type != global::Customer.Types.CustomerType.Normal) {
-      output.WriteRawTag(32);
-      output.WriteEnum((int) Type);
-    }
-    if (_unknownFields != null) {
-      _unknownFields.WriteTo(output);
-    }
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public int CalculateSize() {
-    int size = 0;
-    if (Id != 0) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
-    }
-    if (FirstName.Length != 0) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(FirstName);
-    }
-    if (Surname.Length != 0) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(Surname);
-    }
-    if (Type != global::Customer.Types.CustomerType.Normal) {
-      size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Type);
-    }
-    if (_unknownFields != null) {
-      size += _unknownFields.CalculateSize();
-    }
-    return size;
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void MergeFrom(Customer other) {
-    if (other == null) {
-      return;
-    }
-    if (other.Id != 0) {
-      Id = other.Id;
-    }
-    if (other.FirstName.Length != 0) {
-      FirstName = other.FirstName;
-    }
-    if (other.Surname.Length != 0) {
-      Surname = other.Surname;
-    }
-    if (other.Type != global::Customer.Types.CustomerType.Normal) {
-      Type = other.Type;
-    }
-    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void MergeFrom(pb::CodedInputStream input) {
-    uint tag;
-    while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
-        default:
-          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-          break;
-        case 8: {
-          Id = input.ReadInt32();
-          break;
-        }
-        case 18: {
-          FirstName = input.ReadString();
-          break;
-        }
-        case 26: {
-          Surname = input.ReadString();
-          break;
-        }
-        case 32: {
-          Type = (global::Customer.Types.CustomerType) input.ReadEnum();
-          break;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Id = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            FirstName = input.ReadString();
+            break;
+          }
+          case 26: {
+            Surname = input.ReadString();
+            break;
+          }
+          case 32: {
+            Type = (global::Tests.Sample.Customer.Customer.Types.CustomerType) input.ReadEnum();
+            break;
+          }
         }
       }
     }
-  }
 
-  #region Nested types
-  /// <summary>Container for nested types declared in the Customer message type.</summary>
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public static partial class Types {
-    public enum CustomerType {
-      [pbr::OriginalName("Normal")] Normal = 0,
-      [pbr::OriginalName("VIP")] Vip = 1,
+    #region Nested types
+    /// <summary>Container for nested types declared in the Customer message type.</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static partial class Types {
+      public enum CustomerType {
+        [pbr::OriginalName("Normal")] Normal = 0,
+        [pbr::OriginalName("VIP")] Vip = 1,
+      }
+
     }
+    #endregion
 
   }
+
   #endregion
 
 }
-
-#endregion
-
 
 #endregion Designer generated code

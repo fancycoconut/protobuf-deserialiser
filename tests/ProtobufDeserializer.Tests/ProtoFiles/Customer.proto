@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+package tests.sample.customer;
+
 message Customer {
     int32 Id = 1;
     string FirstName = 2;

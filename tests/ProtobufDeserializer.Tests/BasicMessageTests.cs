@@ -2,6 +2,7 @@ using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Dtos;
 using ProtobufDeserializer.Tests.Helpers;
+using Customer = Tests.Sample.Customer.Customer;
 
 namespace ProtobufDeserializer.Tests
 {
@@ -44,7 +45,7 @@ namespace ProtobufDeserializer.Tests
             {
                 Id = 1,
                 FirstName = "Kawai",
-                Type = Customer.Types.CustomerType.Vip
+                Type = Customer.Types.CustomerType.Normal
             };
 
             var data = expectedCustomer.ToByteArray();
@@ -58,7 +59,7 @@ namespace ProtobufDeserializer.Tests
             Assert.AreEqual(expectedCustomer.Id, customer.Id);
             Assert.AreEqual(expectedCustomer.FirstName, customer.FirstName);
             Assert.AreEqual(null, customer.Surname);
-            Assert.AreEqual(CustomerType.Vip, customer.Type);
+            Assert.AreEqual(CustomerType.Normal, customer.Type);
             // Should ignore fields that don't exist and default them
             Assert.AreEqual(null, customer.LastName);
         }

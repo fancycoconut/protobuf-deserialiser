@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+package tests.sample.foo;
+
 message Foo {
 	int32 Id = 1;
 	string FirstName = 2;

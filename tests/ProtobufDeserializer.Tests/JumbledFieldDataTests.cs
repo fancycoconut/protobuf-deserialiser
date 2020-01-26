@@ -4,6 +4,7 @@ using ProtobufDeserializer.Tests.Dtos;
 using ProtobufDeserializer.Tests.Helpers;
 using System;
 using System.Linq;
+using Customer = Tests.Sample.Customer.Customer;
 
 namespace ProtobufDeserializer.Tests
 {

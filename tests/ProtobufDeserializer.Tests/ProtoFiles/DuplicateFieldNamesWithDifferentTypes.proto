@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+package tests.sample.duplicates;
+
 message Dup {
 	int32 Field1 = 1;
 	int32 Field2 = 2;

@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+package tests.sample;
+
 message OneOfExample {
 	string key = 1;
 	oneof value {

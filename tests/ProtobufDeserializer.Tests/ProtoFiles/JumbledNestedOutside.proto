@@ -1,5 +1,7 @@
 ﻿syntax = "proto3";
 
+package tests.sample.jumbled.nestedmessages;
+
 message JumbledFooOutside {
 	int32 Id = 1;
 	string FirstName = 3;

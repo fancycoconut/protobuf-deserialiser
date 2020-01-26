@@ -3,6 +3,9 @@ using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Dtos;
 using ProtobufDeserializer.Tests.Helpers;
+using Tests.Sample.Jumbled.Fields;
+using Customer = Tests.Sample.Customer.Customer;
+using Foo = Tests.Sample.Foo.Foo;
 
 namespace ProtobufDeserializer.Tests
 {

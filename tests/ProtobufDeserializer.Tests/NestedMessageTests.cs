@@ -1,6 +1,7 @@
 ﻿using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Helpers;
+using Tests.Sample.Messages.Nested;
 
 namespace ProtobufDeserializer.Tests
 {

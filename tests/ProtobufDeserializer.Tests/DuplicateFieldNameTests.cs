@@ -1,9 +1,8 @@
 ﻿using Google.Protobuf;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProtobufDeserializer.Tests.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using Tests.Sample.Duplicates;
+using Tests.Sample.Jumbled;
 
 namespace ProtobufDeserializer.Tests
 {

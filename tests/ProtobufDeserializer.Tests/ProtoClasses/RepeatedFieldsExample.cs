@@ -9,231 +9,234 @@ using pb = global::Google.Protobuf;
 using pbc = global::Google.Protobuf.Collections;
 using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
-/// <summary>Holder for reflection information generated from RepeatedFieldsExample.proto</summary>
-public static partial class RepeatedFieldsExampleReflection {
+namespace Tests.Sample {
 
-  #region Descriptor
-  /// <summary>File descriptor for RepeatedFieldsExample.proto</summary>
-  public static pbr::FileDescriptor Descriptor {
-    get { return descriptor; }
-  }
-  private static pbr::FileDescriptor descriptor;
+  /// <summary>Holder for reflection information generated from RepeatedFieldsExample.proto</summary>
+  public static partial class RepeatedFieldsExampleReflection {
 
-  static RepeatedFieldsExampleReflection() {
-    byte[] descriptorData = global::System.Convert.FromBase64String(
-        string.Concat(
-          "ChtSZXBlYXRlZEZpZWxkc0V4YW1wbGUucHJvdG8iUQoVUmVwZWF0ZWRGaWVs",
-          "ZHNFeGFtcGxlEgoKAklkGAEgASgFEgwKBE5hbWUYAiABKAkSEAoIU3R1ZGVu",
-          "dHMYAyADKAkSDAoEQWdlcxgEIAMoBWIGcHJvdG8z"));
-    descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-        new pbr::FileDescriptor[] { },
-        new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::RepeatedFieldsExample), global::RepeatedFieldsExample.Parser, new[]{ "Id", "Name", "Students", "Ages" }, null, null, null, null)
-        }));
-  }
-  #endregion
-
-}
-#region Messages
-public sealed partial class RepeatedFieldsExample : pb::IMessage<RepeatedFieldsExample> {
-  private static readonly pb::MessageParser<RepeatedFieldsExample> _parser = new pb::MessageParser<RepeatedFieldsExample>(() => new RepeatedFieldsExample());
-  private pb::UnknownFieldSet _unknownFields;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public static pb::MessageParser<RepeatedFieldsExample> Parser { get { return _parser; } }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public static pbr::MessageDescriptor Descriptor {
-    get { return global::RepeatedFieldsExampleReflection.Descriptor.MessageTypes[0]; }
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  pbr::MessageDescriptor pb::IMessage.Descriptor {
-    get { return Descriptor; }
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public RepeatedFieldsExample() {
-    OnConstruction();
-  }
-
-  partial void OnConstruction();
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public RepeatedFieldsExample(RepeatedFieldsExample other) : this() {
-    id_ = other.id_;
-    name_ = other.name_;
-    students_ = other.students_.Clone();
-    ages_ = other.ages_.Clone();
-    _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
-  }
-
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public RepeatedFieldsExample Clone() {
-    return new RepeatedFieldsExample(this);
-  }
-
-  /// <summary>Field number for the "Id" field.</summary>
-  public const int IdFieldNumber = 1;
-  private int id_;
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public int Id {
-    get { return id_; }
-    set {
-      id_ = value;
+    #region Descriptor
+    /// <summary>File descriptor for RepeatedFieldsExample.proto</summary>
+    public static pbr::FileDescriptor Descriptor {
+      get { return descriptor; }
     }
-  }
+    private static pbr::FileDescriptor descriptor;
 
-  /// <summary>Field number for the "Name" field.</summary>
-  public const int NameFieldNumber = 2;
-  private string name_ = "";
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public string Name {
-    get { return name_; }
-    set {
-      name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    static RepeatedFieldsExampleReflection() {
+      byte[] descriptorData = global::System.Convert.FromBase64String(
+          string.Concat(
+            "ChtSZXBlYXRlZEZpZWxkc0V4YW1wbGUucHJvdG8SDHRlc3RzLnNhbXBsZSJR",
+            "ChVSZXBlYXRlZEZpZWxkc0V4YW1wbGUSCgoCSWQYASABKAUSDAoETmFtZRgC",
+            "IAEoCRIQCghTdHVkZW50cxgDIAMoCRIMCgRBZ2VzGAQgAygFYgZwcm90bzM="));
+      descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
+          new pbr::FileDescriptor[] { },
+          new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Tests.Sample.RepeatedFieldsExample), global::Tests.Sample.RepeatedFieldsExample.Parser, new[]{ "Id", "Name", "Students", "Ages" }, null, null, null, null)
+          }));
     }
-  }
+    #endregion
 
-  /// <summary>Field number for the "Students" field.</summary>
-  public const int StudentsFieldNumber = 3;
-  private static readonly pb::FieldCodec<string> _repeated_students_codec
-      = pb::FieldCodec.ForString(26);
-  private readonly pbc::RepeatedField<string> students_ = new pbc::RepeatedField<string>();
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public pbc::RepeatedField<string> Students {
-    get { return students_; }
   }
+  #region Messages
+  public sealed partial class RepeatedFieldsExample : pb::IMessage<RepeatedFieldsExample> {
+    private static readonly pb::MessageParser<RepeatedFieldsExample> _parser = new pb::MessageParser<RepeatedFieldsExample>(() => new RepeatedFieldsExample());
+    private pb::UnknownFieldSet _unknownFields;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pb::MessageParser<RepeatedFieldsExample> Parser { get { return _parser; } }
 
-  /// <summary>Field number for the "Ages" field.</summary>
-  public const int AgesFieldNumber = 4;
-  private static readonly pb::FieldCodec<int> _repeated_ages_codec
-      = pb::FieldCodec.ForInt32(34);
-  private readonly pbc::RepeatedField<int> ages_ = new pbc::RepeatedField<int>();
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public pbc::RepeatedField<int> Ages {
-    get { return ages_; }
-  }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public static pbr::MessageDescriptor Descriptor {
+      get { return global::Tests.Sample.RepeatedFieldsExampleReflection.Descriptor.MessageTypes[0]; }
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public override bool Equals(object other) {
-    return Equals(other as RepeatedFieldsExample);
-  }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    pbr::MessageDescriptor pb::IMessage.Descriptor {
+      get { return Descriptor; }
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public bool Equals(RepeatedFieldsExample other) {
-    if (ReferenceEquals(other, null)) {
-      return false;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RepeatedFieldsExample() {
+      OnConstruction();
     }
-    if (ReferenceEquals(other, this)) {
-      return true;
-    }
-    if (Id != other.Id) return false;
-    if (Name != other.Name) return false;
-    if(!students_.Equals(other.students_)) return false;
-    if(!ages_.Equals(other.ages_)) return false;
-    return Equals(_unknownFields, other._unknownFields);
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public override int GetHashCode() {
-    int hash = 1;
-    if (Id != 0) hash ^= Id.GetHashCode();
-    if (Name.Length != 0) hash ^= Name.GetHashCode();
-    hash ^= students_.GetHashCode();
-    hash ^= ages_.GetHashCode();
-    if (_unknownFields != null) {
-      hash ^= _unknownFields.GetHashCode();
-    }
-    return hash;
-  }
+    partial void OnConstruction();
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public override string ToString() {
-    return pb::JsonFormatter.ToDiagnosticString(this);
-  }
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RepeatedFieldsExample(RepeatedFieldsExample other) : this() {
+      id_ = other.id_;
+      name_ = other.name_;
+      students_ = other.students_.Clone();
+      ages_ = other.ages_.Clone();
+      _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
+    }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void WriteTo(pb::CodedOutputStream output) {
-    if (Id != 0) {
-      output.WriteRawTag(8);
-      output.WriteInt32(Id);
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public RepeatedFieldsExample Clone() {
+      return new RepeatedFieldsExample(this);
     }
-    if (Name.Length != 0) {
-      output.WriteRawTag(18);
-      output.WriteString(Name);
-    }
-    students_.WriteTo(output, _repeated_students_codec);
-    ages_.WriteTo(output, _repeated_ages_codec);
-    if (_unknownFields != null) {
-      _unknownFields.WriteTo(output);
-    }
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public int CalculateSize() {
-    int size = 0;
-    if (Id != 0) {
-      size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
+    /// <summary>Field number for the "Id" field.</summary>
+    public const int IdFieldNumber = 1;
+    private int id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
     }
-    if (Name.Length != 0) {
-      size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
-    }
-    size += students_.CalculateSize(_repeated_students_codec);
-    size += ages_.CalculateSize(_repeated_ages_codec);
-    if (_unknownFields != null) {
-      size += _unknownFields.CalculateSize();
-    }
-    return size;
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void MergeFrom(RepeatedFieldsExample other) {
-    if (other == null) {
-      return;
+    /// <summary>Field number for the "Name" field.</summary>
+    public const int NameFieldNumber = 2;
+    private string name_ = "";
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public string Name {
+      get { return name_; }
+      set {
+        name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+      }
     }
-    if (other.Id != 0) {
-      Id = other.Id;
-    }
-    if (other.Name.Length != 0) {
-      Name = other.Name;
-    }
-    students_.Add(other.students_);
-    ages_.Add(other.ages_);
-    _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
-  }
 
-  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-  public void MergeFrom(pb::CodedInputStream input) {
-    uint tag;
-    while ((tag = input.ReadTag()) != 0) {
-      switch(tag) {
-        default:
-          _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
-          break;
-        case 8: {
-          Id = input.ReadInt32();
-          break;
-        }
-        case 18: {
-          Name = input.ReadString();
-          break;
-        }
-        case 26: {
-          students_.AddEntriesFrom(input, _repeated_students_codec);
-          break;
-        }
-        case 34:
-        case 32: {
-          ages_.AddEntriesFrom(input, _repeated_ages_codec);
-          break;
+    /// <summary>Field number for the "Students" field.</summary>
+    public const int StudentsFieldNumber = 3;
+    private static readonly pb::FieldCodec<string> _repeated_students_codec
+        = pb::FieldCodec.ForString(26);
+    private readonly pbc::RepeatedField<string> students_ = new pbc::RepeatedField<string>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<string> Students {
+      get { return students_; }
+    }
+
+    /// <summary>Field number for the "Ages" field.</summary>
+    public const int AgesFieldNumber = 4;
+    private static readonly pb::FieldCodec<int> _repeated_ages_codec
+        = pb::FieldCodec.ForInt32(34);
+    private readonly pbc::RepeatedField<int> ages_ = new pbc::RepeatedField<int>();
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public pbc::RepeatedField<int> Ages {
+      get { return ages_; }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override bool Equals(object other) {
+      return Equals(other as RepeatedFieldsExample);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool Equals(RepeatedFieldsExample other) {
+      if (ReferenceEquals(other, null)) {
+        return false;
+      }
+      if (ReferenceEquals(other, this)) {
+        return true;
+      }
+      if (Id != other.Id) return false;
+      if (Name != other.Name) return false;
+      if(!students_.Equals(other.students_)) return false;
+      if(!ages_.Equals(other.ages_)) return false;
+      return Equals(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override int GetHashCode() {
+      int hash = 1;
+      if (Id != 0) hash ^= Id.GetHashCode();
+      if (Name.Length != 0) hash ^= Name.GetHashCode();
+      hash ^= students_.GetHashCode();
+      hash ^= ages_.GetHashCode();
+      if (_unknownFields != null) {
+        hash ^= _unknownFields.GetHashCode();
+      }
+      return hash;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public override string ToString() {
+      return pb::JsonFormatter.ToDiagnosticString(this);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void WriteTo(pb::CodedOutputStream output) {
+      if (Id != 0) {
+        output.WriteRawTag(8);
+        output.WriteInt32(Id);
+      }
+      if (Name.Length != 0) {
+        output.WriteRawTag(18);
+        output.WriteString(Name);
+      }
+      students_.WriteTo(output, _repeated_students_codec);
+      ages_.WriteTo(output, _repeated_ages_codec);
+      if (_unknownFields != null) {
+        _unknownFields.WriteTo(output);
+      }
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int CalculateSize() {
+      int size = 0;
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
+      }
+      if (Name.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(Name);
+      }
+      size += students_.CalculateSize(_repeated_students_codec);
+      size += ages_.CalculateSize(_repeated_ages_codec);
+      if (_unknownFields != null) {
+        size += _unknownFields.CalculateSize();
+      }
+      return size;
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(RepeatedFieldsExample other) {
+      if (other == null) {
+        return;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
+      }
+      if (other.Name.Length != 0) {
+        Name = other.Name;
+      }
+      students_.Add(other.students_);
+      ages_.Add(other.ages_);
+      _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
+    }
+
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void MergeFrom(pb::CodedInputStream input) {
+      uint tag;
+      while ((tag = input.ReadTag()) != 0) {
+        switch(tag) {
+          default:
+            _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
+            break;
+          case 8: {
+            Id = input.ReadInt32();
+            break;
+          }
+          case 18: {
+            Name = input.ReadString();
+            break;
+          }
+          case 26: {
+            students_.AddEntriesFrom(input, _repeated_students_codec);
+            break;
+          }
+          case 34:
+          case 32: {
+            ages_.AddEntriesFrom(input, _repeated_ages_codec);
+            break;
+          }
         }
       }
     }
+
   }
 
+  #endregion
+
 }
-
-#endregion
-
 
 #endregion Designer generated code

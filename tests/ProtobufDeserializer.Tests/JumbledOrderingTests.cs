@@ -4,6 +4,9 @@ using ProtobufDeserializer.Tests.Helpers;
 using System;
 using System.Linq;
 using ProtobufDeserializer.Tests.Dtos;
+using Tests.Sample.Jumbled;
+using Tests.Sample.Jumbled.Fields;
+using Tests.Sample.Jumbled.Nestedmessages;
 
 namespace ProtobufDeserializer.Tests
 {

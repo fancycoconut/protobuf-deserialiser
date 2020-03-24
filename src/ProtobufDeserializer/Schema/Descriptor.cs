@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Google.Protobuf;
 using Google.Protobuf.Reflection;
 using ProtobufDeserializer.Extensions;
 
@@ -61,7 +62,8 @@ namespace ProtobufDeserializer.Schema
                 foreach (var field in message.Field)
                 {
                     fieldMap.AddIfNotExists(field.Name, 0);
-                    messageFields.AddIfNotExists($"{field.ComputeFieldTag()}_{field.Name}", FieldFactory.Create(message.Name, field));
+                    
+                    messageFields.AddIfNotExists($"{field.ComputeFieldTag()}_{field.Name}", FieldFactory.Create(field));
 
                     messageMap.Add(field.Name, null);
                 }
@@ -73,7 +75,7 @@ namespace ProtobufDeserializer.Schema
                     foreach (var field in nestedMessage.Field)
                     {
                         fieldMap.AddIfNotExists(field.Name, 0);
-                        messageFields.AddIfNotExists($"{field.ComputeFieldTag()}_{field.Name}", FieldFactory.Create(nestedMessage.Name, field));
+                        messageFields.AddIfNotExists($"{field.ComputeFieldTag()}_{field.Name}", FieldFactory.Create(field));
 
                         nestedMessageMap.Add(field.Name, null);
                     }

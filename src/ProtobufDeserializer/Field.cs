@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Google.Protobuf;
 using Google.Protobuf.Reflection;
 
@@ -7,13 +8,13 @@ namespace ProtobufDeserializer
 {
     public interface IField
     {
-        string Name { get; set; }
-        int FieldNumber { get; set; }
-        string TypeName { get; set; }
-        FieldDescriptorProto.Types.Label Label { get; set; }
-        FieldDescriptorProto.Types.Type Type { get; set; }
+        string Name { get; }
+        int FieldNumber { get; }
+        string TypeName { get; }
+        FieldDescriptorProto.Types.Label Label { get; }
+        FieldDescriptorProto.Types.Type Type { get; }
 
-        string MessageName { get; set; }
+        //string MessageName { get; set; }
 
         object ReadValue(CodedInputStream input);
         // Maybe does not need to be in this level...
@@ -22,13 +23,14 @@ namespace ProtobufDeserializer
 
     public abstract class Field : IField
     {
-        public string Name { get; set; }
-        public int FieldNumber { get; set; }
-        public string TypeName { get; set; }
-        public FieldDescriptorProto.Types.Label Label { get; set; }
-        public FieldDescriptorProto.Types.Type Type { get; set; }
+        private readonly FieldDescriptorProto fieldDescriptor;
 
-        public string MessageName { get; set; }
+        public Field(FieldDescriptorProto fieldDescriptor)
+        {
+            this.fieldDescriptor = fieldDescriptor;
+
+            TypeName = fieldDescriptor.TypeName.Split('.').Last();
+        }
 
         public virtual object ReadValue(CodedInputStream input)
         {
@@ -39,6 +41,12 @@ namespace ProtobufDeserializer
         {
 
         }
+
+        public string Name => fieldDescriptor.Name;
+        public int FieldNumber => fieldDescriptor.Number;
+        public string TypeName { get; }
+        public FieldDescriptorProto.Types.Label Label => fieldDescriptor.Label;
+        public FieldDescriptorProto.Types.Type Type => fieldDescriptor.Type;
 
         // Do not remove just yet... I want to keep the logic to get wire type and field number from tag
         //protected bool CurrentFieldNumberIsCorrect(CodedInputStream input)

@@ -5,7 +5,11 @@ namespace ProtobufDeserializer.Types
 {
     public class EnumField : Field
     {
-        public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Enum);
+        //public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Enum);
+
+        public EnumField(FieldDescriptorProto fieldDescriptor) : base(fieldDescriptor)
+        {
+        }
 
         public override object ReadValue(CodedInputStream input)
         {

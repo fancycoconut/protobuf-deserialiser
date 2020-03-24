@@ -6,7 +6,11 @@ namespace ProtobufDeserializer.Types
 {
     public class BooleanField : Field
     {
-        public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Bool);
+        public BooleanField(FieldDescriptorProto fieldDescriptor) : base(fieldDescriptor)
+        {
+        }
+
+        //public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Bool);
 
         public override object ReadValue(CodedInputStream input)
         {

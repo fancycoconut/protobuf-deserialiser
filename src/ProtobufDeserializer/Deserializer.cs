@@ -161,8 +161,8 @@ namespace ProtobufDeserializer
 
             var propNode = props.First;
             while ((tag = input.PeekTag()) != 0)
-            {
-                if (ProtobufHelper.ComputeFieldNumber((int)tag) > props.Count)
+            {                    
+                if (WireFormat.GetTagFieldNumber(tag) > props.Count)
                     return;
 
                 var prop = propNode.Value;

@@ -5,7 +5,11 @@ namespace ProtobufDeserializer.Types
 {
     public class FloatField : Field
     {
-        public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Float);
+        //public const string FieldTypeName = nameof(FieldDescriptorProto.Types.Type.Float);
+
+        public FloatField(FieldDescriptorProto fieldDescriptor) : base(fieldDescriptor)
+        {
+        }
 
         public override object ReadValue(CodedInputStream input)
         {

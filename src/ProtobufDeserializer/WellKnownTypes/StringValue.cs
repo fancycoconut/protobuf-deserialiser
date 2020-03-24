@@ -6,7 +6,11 @@ namespace ProtobufDeserializer.WellKnownTypes
 {
     public class StringValue : Field
     {
-        public const string FieldTypeName = ".google.protobuf.StringValue";
+        public StringValue(FieldDescriptorProto fieldDescriptor) : base(fieldDescriptor)
+        {
+        }
+
+        //public const string FieldTypeName = ".google.protobuf.StringValue";
 
         public override object ReadValue(CodedInputStream input)
         {
